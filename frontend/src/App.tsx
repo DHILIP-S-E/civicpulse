@@ -290,8 +290,6 @@ export const App: React.FC = () => {
         onOpenArchitecture={() => setIsArchitectureOpen(true)}
         isBackendHealthy={isBackendHealthy}
         activeSnapshotStage={activeSnapshot?.stage_name}
-        isAwsConnected={isAwsConnected}
-        onToggleAwsMode={() => setIsAwsConnected(!isAwsConnected)}
       />
 
       {/* Main Spatial Workspace */}
