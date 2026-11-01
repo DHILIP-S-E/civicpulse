@@ -29,15 +29,13 @@ export const MunicipalDispatchPanel: React.FC<MunicipalDispatchPanelProps> = ({
 
   if (!dispatch) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-3">
-        <div className="w-12 h-12 rounded-full bg-[#111827] border border-[rgba(148,163,184,0.15)] flex items-center justify-center text-slate-600">
-          <Truck className="w-6 h-6" />
+      <div className="bg-white rounded-xl p-6 border border-[#E2E8F0] text-center text-[#64748B] space-y-2.5 shadow-xs">
+        <div className="w-10 h-10 rounded-full bg-[#F1F5F9] border border-[#E2E8F0] flex items-center justify-center text-[#64748B] mx-auto">
+          <Truck className="w-5 h-5" />
         </div>
-        <div>
-          <div className="text-xs font-semibold text-slate-400">No Active Crew Dispatched</div>
-          <div className="text-[11px] text-slate-500 mt-1 max-w-[200px]">
-            Select an urgent hazard from the priority queue and click "Dispatch Crew" to send a super-sucker tanker unit.
-          </div>
+        <div className="text-xs font-semibold text-[#172033]">No Active Fleet Dispatched</div>
+        <div className="text-[11px] text-[#64748B] max-w-[240px] mx-auto">
+          Select an urgent flood zone from the queue below and click "Send Crew" to deploy a dewatering super-sucker tanker unit.
         </div>
       </div>
     );
@@ -60,46 +58,46 @@ export const MunicipalDispatchPanel: React.FC<MunicipalDispatchPanelProps> = ({
   };
 
   return (
-    <div className="bg-[#111827] rounded-xl p-4 border border-[rgba(148,163,184,0.15)] space-y-4 shadow-md">
+    <div className="bg-white rounded-xl p-4 border border-[#E2E8F0] space-y-3.5 shadow-xs">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[rgba(148,163,184,0.15)]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
         <div>
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">
+          <span className="text-[10px] font-mono text-[#64748B] uppercase tracking-wider block">
             {dispatch.dispatch_id}
           </span>
-          <h3 className="text-sm font-bold text-white flex items-center space-x-2 mt-0.5">
-            <Truck className="w-4 h-4 text-blue-400" />
-            <span>Madurai Municipal Dewatering Unit</span>
+          <h3 className="text-sm font-bold text-[#172033] flex items-center space-x-2 mt-0.5">
+            <Truck className="w-4 h-4 text-[#1677FF]" />
+            <span>Madurai Corporation Super-Sucker Unit</span>
           </h3>
         </div>
 
-        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#EAF3FF] text-[#1677FF] border border-[#1677FF]/30">
           En Route
         </span>
       </div>
 
       {/* Assigned Crew Card */}
-      <div className="p-3 bg-[#0B0F19] rounded-lg border border-[rgba(148,163,184,0.15)] space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">Assigned Unit:</span>
-          <span className="font-semibold text-white">{dispatch.crew_id}</span>
+      <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-[#64748B]">Assigned Unit:</span>
+          <span className="font-semibold text-[#172033]">{dispatch.crew_id}</span>
         </div>
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">Vehicle Type:</span>
-          <span className="font-medium text-slate-200">Heavy Super-Sucker Tanker</span>
+        <div className="flex items-center justify-between">
+          <span className="text-[#64748B]">Vehicle Class:</span>
+          <span className="font-medium text-[#172033]">Heavy Super-Sucker Dewatering Tanker</span>
         </div>
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-slate-400">Destination:</span>
-          <span className="font-semibold text-white truncate max-w-[170px]">
+        <div className="flex items-center justify-between">
+          <span className="text-[#64748B]">Destination:</span>
+          <span className="font-semibold text-[#172033] truncate max-w-[180px]">
             {dispatch.hazard_location}
           </span>
         </div>
-        <div className="flex items-center justify-between text-xs pt-1 border-t border-[rgba(148,163,184,0.1)]">
-          <span className="text-slate-400 flex items-center space-x-1">
-            <Clock className="w-3.5 h-3.5 text-slate-500" />
-            <span>Est. Arrival:</span>
+        <div className="flex items-center justify-between pt-1 border-t border-[#E2E8F0]">
+          <span className="text-[#64748B] flex items-center space-x-1">
+            <Clock className="w-3.5 h-3.5 text-[#94A3B8]" />
+            <span>Estimated Arrival:</span>
           </span>
-          <span className="font-bold text-blue-400 tabular-nums">
+          <span className="font-bold text-[#1677FF] tabular-nums">
             {dispatch.estimated_arrival_minutes} minutes
           </span>
         </div>
@@ -107,45 +105,45 @@ export const MunicipalDispatchPanel: React.FC<MunicipalDispatchPanelProps> = ({
 
       {/* Progress Timeline */}
       <div>
-        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+        <label className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-2">
           Dispatch Activity Log
         </label>
-        <div className="space-y-2 relative pl-4 border-l border-slate-700">
+        <div className="space-y-2 relative pl-4 border-l-2 border-[#CBD5E1]">
           {(dispatch.action_log || []).map((log, i) => (
             <div key={i} className="relative text-xs space-y-0.5">
-              <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-blue-500 ring-4 ring-[#111827]"></span>
-              <div className="text-[10px] text-slate-500 font-mono">
+              <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-[#1677FF] ring-4 ring-white"></span>
+              <div className="text-[10px] text-[#94A3B8] font-mono">
                 {formatLogTime(log.timestamp)}
               </div>
-              <div className="text-slate-300 text-[11px] leading-snug">{log.message}</div>
+              <div className="text-[#172033] text-[11px] leading-snug">{log.message}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Resolution Action */}
-      <div className="pt-3 border-t border-[rgba(148,163,184,0.15)]">
+      <div className="pt-3 border-t border-[#E2E8F0]">
         {!isHazardResolved ? (
           <button
             onClick={() => setShowConfirmModal(true)}
             disabled={isResolving}
-            className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg shadow hover:shadow-emerald-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+            className="w-full py-2.5 px-4 bg-[#16A34A] hover:bg-[#15803D] disabled:opacity-50 text-white font-semibold text-xs rounded-lg shadow-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
           >
             <CheckCircle2 className={`w-4 h-4 ${isResolving ? 'animate-spin' : ''}`} />
             <span>{isResolving ? 'Updating City Map...' : 'Mark As Resolved (Road Cleared)'}</span>
           </button>
         ) : (
-          <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/40 text-center space-y-2.5">
-            <div className="text-xs font-bold text-emerald-300 flex items-center justify-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-emerald-400" />
-              <span>Road cleared - Database updated - Map refreshed</span>
+          <div className="p-3.5 rounded-xl bg-[#F0FDF4] border border-[#16A34A]/40 text-center space-y-2">
+            <div className="text-xs font-bold text-[#16A34A] flex items-center justify-center space-x-2">
+              <CheckCircle className="w-4 h-4 text-[#16A34A]" />
+              <span>Road cleared - Map and Database refreshed</span>
             </div>
             <button
               onClick={onResetDispatch}
-              className="px-3.5 py-1.5 bg-[#1F2937] hover:bg-slate-700 text-white text-xs font-semibold rounded-lg border border-[rgba(148,163,184,0.2)] transition-colors shadow cursor-pointer flex items-center justify-center space-x-1.5 mx-auto"
+              className="px-3.5 py-1.5 bg-white hover:bg-[#F8FAFC] text-[#172033] text-xs font-semibold rounded-lg border border-[#E2E8F0] transition-colors shadow-2xs cursor-pointer flex items-center justify-center space-x-1.5 mx-auto"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Ready for Next Dispatch</span>
+              <RotateCcw className="w-3.5 h-3.5 text-[#64748B]" />
+              <span>Ready for Next Fleet Dispatch</span>
             </button>
           </div>
         )}
@@ -153,26 +151,26 @@ export const MunicipalDispatchPanel: React.FC<MunicipalDispatchPanelProps> = ({
 
       {/* Confirmation Dialog */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#111827] w-full max-w-md p-6 rounded-2xl border border-[rgba(148,163,184,0.2)] space-y-4 shadow-2xl">
-            <div className="text-base font-bold text-white flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span>Confirm Hazard Resolution</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-md p-6 rounded-2xl border border-[#E2E8F0] space-y-4 shadow-2xl">
+            <div className="text-base font-bold text-[#172033] flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-[#16A34A]" />
+              <span>Confirm Road Clearance</span>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Have the dewatering crews finished pump-out operations at <strong className="text-white">{dispatch.hazard_location}</strong>?
-              Marking this as resolved will update the city flood map, notify commuters, and reopen the safe travel corridor.
+            <p className="text-xs text-[#64748B] leading-relaxed">
+              Have the dewatering tankers finished pump-out operations at <strong className="text-[#172033]">{dispatch.hazard_location}</strong>?
+              Marking this as resolved will execute an atomic lakehouse MERGE INTO update, notify commuters, and reopen the corridor.
             </p>
-            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[rgba(148,163,184,0.15)]">
+            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-[#E2E8F0]">
               <button
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 bg-[#0B0F19] hover:bg-slate-800 text-slate-300 hover:text-white text-xs rounded-lg border border-[rgba(148,163,184,0.15)] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#172033] text-xs rounded-lg transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmResolve}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow transition-colors cursor-pointer"
+                className="px-5 py-2 bg-[#16A34A] hover:bg-[#15803D] text-white text-xs font-bold rounded-lg shadow-sm transition-colors cursor-pointer"
               >
                 Confirm Road Cleared
               </button>

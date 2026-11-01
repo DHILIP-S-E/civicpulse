@@ -7,29 +7,41 @@ export default {
   theme: {
     extend: {
       colors: {
-        ground: '#0B0F19',
-        surface: '#111827',
-        raised: '#1F2937',
-        card: '#111827',
-        border: 'rgba(148, 163, 184, 0.15)',
-        rule: 'rgba(148, 163, 184, 0.12)',
-        terminal: {
-          border: 'rgba(148, 163, 184, 0.15)',
-          control: '#1F2937',
+        background: '#F5F7FA',
+        surface: {
+          DEFAULT: '#FFFFFF',
+          secondary: '#F8FAFC',
+        },
+        primary: {
+          DEFAULT: '#1677FF',
+          hover: '#0958D9',
+          light: '#EAF3FF',
+        },
+        ink: {
+          primary: '#172033',
+          secondary: '#64748B',
           muted: '#94A3B8',
-          subtle: '#64748B',
         },
-        hazard: {
-          critical: '#EF4444',
-          moderate: '#F59E0B',
-          resolved: '#10B981',
+        border: {
+          DEFAULT: '#E2E8F0',
+          strong: '#CBD5E1',
         },
-        telemetry: '#3B82F6',
-        accent: '#3B82F6',
-        interactive: '#3B82F6',
-        safe: '#10B981',
-        warning: '#F59E0B',
-        danger: '#EF4444',
+        danger: {
+          DEFAULT: '#DC2626',
+          light: '#FEF2F2',
+        },
+        warning: {
+          DEFAULT: '#D97706',
+          light: '#FFFBEB',
+        },
+        success: {
+          DEFAULT: '#16A34A',
+          light: '#F0FDF4',
+        },
+        info: {
+          DEFAULT: '#0284C7',
+          light: '#F0F9FF',
+        },
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],

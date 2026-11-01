@@ -32,6 +32,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [cameraMode, setCameraMode] = useState<'3d' | '2d'>('3d');
   const [isOrbiting, setIsOrbiting] = useState(false);
   const orbitInterval = useRef<any>(null);
   const floatingMarkersRef = useRef<maplibregl.Marker[]>([]);
@@ -48,7 +49,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
           'esri-dark-base': {
             type: 'raster',
             tiles: [
-              'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+              'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
             ],
             tileSize: 256,
             attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors'
@@ -56,7 +57,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
           'esri-dark-reference': {
             type: 'raster',
             tiles: [
-              'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
+              'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
             ],
             tileSize: 256,
             attribution: 'Esri'
@@ -106,7 +107,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
           'fill-extrusion-color': [
             'coalesce',
             ['get', 'color'],
-            '#334155'
+            '#cbd5e1'
           ],
           'fill-extrusion-height': ['get', 'height'],
           'fill-extrusion-base': ['get', 'base_height'],
@@ -462,14 +463,16 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     });
   }, [selectedHazard]);
 
-  // Camera presets with friendly human labels
+  // Camera presets
   const setCamera3D = () => {
     if (!mapRef.current) return;
+    setCameraMode('3d');
     mapRef.current.easeTo({ pitch: 62, zoom: 13.8, bearing: -25, duration: 1000 });
   };
 
   const setCamera2D = () => {
     if (!mapRef.current) return;
+    setCameraMode('2d');
     mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 1000 });
   };
 
@@ -492,29 +495,37 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="w-full h-full" />
 
-      {/* Human Camera Controls */}
-      <div className="absolute top-4 left-4 z-10 bg-[#111827]/90 backdrop-blur-md border border-[rgba(148,163,184,0.2)] p-1 rounded-lg flex items-center space-x-1 text-xs select-none shadow-lg">
+      {/* Camera Mode & Orbit Controls */}
+      <div className="absolute top-4 left-4 z-10 bg-white border border-[#E2E8F0] p-1 rounded-lg flex items-center space-x-1 text-xs select-none shadow-sm">
         <button
           onClick={setCamera3D}
-          className="px-3 py-1.5 bg-[#1F2937] hover:bg-slate-700 text-white rounded font-medium transition-colors"
+          className={`px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer ${
+            cameraMode === '3d'
+              ? 'bg-[#1677FF] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+          }`}
         >
-          3D View
+          3D Perspective
         </button>
         <button
           onClick={setCamera2D}
-          className="px-3 py-1.5 hover:bg-[#1F2937] text-slate-300 hover:text-white rounded font-medium transition-colors"
+          className={`px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer ${
+            cameraMode === '2d'
+              ? 'bg-[#1677FF] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+          }`}
         >
-          2D View
+          2D Topographic
         </button>
         <button
           onClick={toggleCinematicOrbit}
-          className={`px-3 py-1.5 rounded font-medium transition-colors ${
+          className={`px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer ${
             isOrbiting
-              ? 'bg-blue-600 text-white'
-              : 'hover:bg-[#1F2937] text-slate-300 hover:text-white'
+              ? 'bg-[#D97706] text-white'
+              : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
           }`}
         >
-          {isOrbiting ? 'Stop Orbit' : 'Orbit'}
+          {isOrbiting ? 'Stop Orbit' : 'Rotate Orbit'}
         </button>
       </div>
     </div>
