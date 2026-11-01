@@ -1,0 +1,7 @@
+{
+  "source": ["aws.geo"],
+  "detail-type": ["Location Geofence Event"],
+  "detail": {
+    "EventType": ["ENTER", "EXIT"]
+  }
+}

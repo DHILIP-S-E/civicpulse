@@ -1,0 +1,676 @@
+{
+  "dataset_metadata": {
+    "city": "Madurai",
+    "state": "Tamil Nadu",
+    "country": "India",
+    "bounding_box": [78.08, 9.88, 78.18, 9.97],
+    "coordinate_reference_system": "EPSG:4326 (WGS84)",
+    "scenario": "Simulated Monsoonal Storm Inundation & Municipal Response",
+    "version": "1.0.0",
+    "disclaimer": "This is a deterministic demonstration dataset for the CivicPulse Madurai Spatial Lakehouse hackathon project. Locations are mapped to real Madurai geographic features, but storm conditions and depths are simulated for demonstration purposes."
+  },
+  "snapshots": [
+    {
+      "snapshot_id": "snap-20261031-060000-001",
+      "stage_name": "Stage 1 — T−18h: Baseline",
+      "relative_time": "T-18h",
+      "timestamp": "2026-10-31T06:00:00Z",
+      "commit_type": "APPEND",
+      "summary": "Pre-storm dry baseline with localized chronic drainage issues",
+      "hazards": [
+        {
+          "hazard_id": "HAZ-MDU-001",
+          "location_name": "Sellur Railway Underpass / Kanpalayam",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1245, 9.9385],
+                [78.1295, 9.9385],
+                [78.1295, 9.9425],
+                [78.1245, 9.9425],
+                [78.1245, 9.9385]
+              ]
+            ]
+          },
+          "longitude": 78.127,
+          "latitude": 9.9405,
+          "water_depth_cm": 25.0,
+          "observed_at": "2026-10-31T05:30:00Z",
+          "updated_at": "2026-10-31T06:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-SLR-04",
+          "confidence": 0.94,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-002",
+          "location_name": "Simmakkal North Veli Street Junction",
+          "hazard_type": "WASTE_OVERFLOW",
+          "severity": "LOW",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1205, 9.9268],
+                [78.1245, 9.9268],
+                [78.1245, 9.9298],
+                [78.1205, 9.9298],
+                [78.1205, 9.9268]
+              ]
+            ]
+          },
+          "longitude": 78.1225,
+          "latitude": 9.9283,
+          "water_depth_cm": 10.0,
+          "observed_at": "2026-10-31T05:45:00Z",
+          "updated_at": "2026-10-31T06:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Ward 42 Sanitation Inspection Log #81",
+          "confidence": 0.88,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:45:00Z"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "snap-20261031-120000-002",
+      "stage_name": "Stage 2 — T−12h: Storm Development",
+      "relative_time": "T-12h",
+      "timestamp": "2026-10-31T12:00:00Z",
+      "commit_type": "APPEND",
+      "summary": "Heavy monsoonal showers intensify flooding near Vaigai riverbank corridors",
+      "hazards": [
+        {
+          "hazard_id": "HAZ-MDU-001",
+          "location_name": "Sellur Railway Underpass / Kanpalayam",
+          "hazard_type": "FLOOD",
+          "severity": "CRITICAL",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1235, 9.9375],
+                [78.1315, 9.9375],
+                [78.1315, 9.9445],
+                [78.1235, 9.9445],
+                [78.1235, 9.9375]
+              ]
+            ]
+          },
+          "longitude": 78.1275,
+          "latitude": 9.941,
+          "water_depth_cm": 65.0,
+          "observed_at": "2026-10-31T11:45:00Z",
+          "updated_at": "2026-10-31T12:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-SLR-04",
+          "confidence": 0.98,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-002",
+          "location_name": "Simmakkal North Veli Street Junction",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1195, 9.9258],
+                [78.1255, 9.9258],
+                [78.1255, 9.9308],
+                [78.1195, 9.9308],
+                [78.1195, 9.9258]
+              ]
+            ]
+          },
+          "longitude": 78.1225,
+          "latitude": 9.9283,
+          "water_depth_cm": 35.0,
+          "observed_at": "2026-10-31T11:50:00Z",
+          "updated_at": "2026-10-31T12:00:00Z",
+          "source_type": "CITIZEN_REPORT",
+          "source_reference": "CivicPulse App Report #CR-2026-109",
+          "confidence": 0.85,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:45:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-003",
+          "location_name": "Goripalayam Thevar Statue Intersection",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1305, 9.931],
+                [78.1355, 9.931],
+                [78.1355, 9.935],
+                [78.1305, 9.935],
+                [78.1305, 9.931]
+              ]
+            ]
+          },
+          "longitude": 78.133,
+          "latitude": 9.933,
+          "water_depth_cm": 30.0,
+          "observed_at": "2026-10-31T11:30:00Z",
+          "updated_at": "2026-10-31T12:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Ward 38 Traffic Advisory Log #14",
+          "confidence": 0.92,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-004",
+          "location_name": "Arapalayam Bus Stand Outer Ring",
+          "hazard_type": "DEBRIS",
+          "severity": "LOW",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1045, 9.9325],
+                [78.1095, 9.9325],
+                [78.1095, 9.9365],
+                [78.1045, 9.9365],
+                [78.1045, 9.9325]
+              ]
+            ]
+          },
+          "longitude": 78.107,
+          "latitude": 9.9345,
+          "water_depth_cm": 12.0,
+          "observed_at": "2026-10-31T11:20:00Z",
+          "updated_at": "2026-10-31T12:00:00Z",
+          "source_type": "CITIZEN_REPORT",
+          "source_reference": "CivicPulse App Report #CR-2026-114",
+          "confidence": 0.79,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:20:00Z"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "snap-20261031-180000-003",
+      "stage_name": "Stage 3 — T−6h: Peak Simulated Storm",
+      "relative_time": "T-6h",
+      "timestamp": "2026-10-31T18:00:00Z",
+      "commit_type": "OVERWRITE",
+      "summary": "Peak precipitation causes acute water logging across major arterial corridors",
+      "hazards": [
+        {
+          "hazard_id": "HAZ-MDU-001",
+          "location_name": "Sellur Railway Underpass / Kanpalayam",
+          "hazard_type": "FLOOD",
+          "severity": "CRITICAL",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1225, 9.9365],
+                [78.1325, 9.9365],
+                [78.1325, 9.9455],
+                [78.1225, 9.9455],
+                [78.1225, 9.9365]
+              ]
+            ]
+          },
+          "longitude": 78.1275,
+          "latitude": 9.941,
+          "water_depth_cm": 95.0,
+          "observed_at": "2026-10-31T17:45:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-SLR-04",
+          "confidence": 0.99,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-002",
+          "location_name": "Simmakkal North Veli Street Junction",
+          "hazard_type": "FLOOD",
+          "severity": "CRITICAL",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1185, 9.9248],
+                [78.1265, 9.9248],
+                [78.1265, 9.9318],
+                [78.1185, 9.9318],
+                [78.1185, 9.9248]
+              ]
+            ]
+          },
+          "longitude": 78.1225,
+          "latitude": 9.9283,
+          "water_depth_cm": 70.0,
+          "observed_at": "2026-10-31T17:50:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "CITIZEN_REPORT",
+          "source_reference": "CivicPulse App Report #CR-2026-189",
+          "confidence": 0.91,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:45:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-003",
+          "location_name": "Goripalayam Thevar Statue Intersection",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1295, 9.93],
+                [78.1365, 9.93],
+                [78.1365, 9.936],
+                [78.1295, 9.936],
+                [78.1295, 9.93]
+              ]
+            ]
+          },
+          "longitude": 78.133,
+          "latitude": 9.933,
+          "water_depth_cm": 48.0,
+          "observed_at": "2026-10-31T17:35:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Ward 38 Traffic Advisory Log #22",
+          "confidence": 0.94,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-004",
+          "location_name": "Arapalayam Bus Stand Outer Ring",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1035, 9.9315],
+                [78.1105, 9.9315],
+                [78.1105, 9.9375],
+                [78.1035, 9.9375],
+                [78.1035, 9.9315]
+              ]
+            ]
+          },
+          "longitude": 78.107,
+          "latitude": 9.9345,
+          "water_depth_cm": 38.0,
+          "observed_at": "2026-10-31T17:40:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "CITIZEN_REPORT",
+          "source_reference": "CivicPulse App Report #CR-2026-194",
+          "confidence": 0.86,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:20:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-005",
+          "location_name": "Periyar Bus Stand West Gate",
+          "hazard_type": "FLOOD",
+          "severity": "CRITICAL",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1105, 9.9155],
+                [78.1165, 9.9155],
+                [78.1165, 9.9195],
+                [78.1105, 9.9195],
+                [78.1105, 9.9155]
+              ]
+            ]
+          },
+          "longitude": 78.1135,
+          "latitude": 9.9175,
+          "water_depth_cm": 60.0,
+          "observed_at": "2026-10-31T17:55:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-PRY-01",
+          "confidence": 0.97,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T17:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-006",
+          "location_name": "Kalavasal Junction Bypass",
+          "hazard_type": "ROAD_DAMAGE",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.0905, 9.9245],
+                [78.0965, 9.9245],
+                [78.0965, 9.9285],
+                [78.0905, 9.9285],
+                [78.0905, 9.9245]
+              ]
+            ]
+          },
+          "longitude": 78.0935,
+          "latitude": 9.9265,
+          "water_depth_cm": 20.0,
+          "observed_at": "2026-10-31T17:15:00Z",
+          "updated_at": "2026-10-31T18:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Ward 12 Road Quality Notice #07",
+          "confidence": 0.89,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T17:15:00Z"
+        }
+      ]
+    },
+    {
+      "snapshot_id": "snap-20261101-000000-004",
+      "stage_name": "Stage 4 — Latest State: Post-Intervention",
+      "relative_time": "Latest",
+      "timestamp": "2026-11-01T00:00:00Z",
+      "commit_type": "MERGE_UPDATE",
+      "summary": "Madurai Corporation Corporation Super Sucker trucks deployed; Simmakkal cleared & Goripalayam receding",
+      "hazards": [
+        {
+          "hazard_id": "HAZ-MDU-001",
+          "location_name": "Sellur Railway Underpass / Kanpalayam",
+          "hazard_type": "FLOOD",
+          "severity": "CRITICAL",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1235, 9.9375],
+                [78.1315, 9.9375],
+                [78.1315, 9.9445],
+                [78.1235, 9.9445],
+                [78.1235, 9.9375]
+              ]
+            ]
+          },
+          "longitude": 78.1275,
+          "latitude": 9.941,
+          "water_depth_cm": 75.0,
+          "observed_at": "2026-10-31T23:30:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-SLR-04",
+          "confidence": 0.99,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-002",
+          "location_name": "Simmakkal North Veli Street Junction",
+          "hazard_type": "FLOOD",
+          "severity": "LOW",
+          "status": "RESOLVED",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1185, 9.9248],
+                [78.1265, 9.9248],
+                [78.1265, 9.9318],
+                [78.1185, 9.9318],
+                [78.1185, 9.9248]
+              ]
+            ]
+          },
+          "longitude": 78.1225,
+          "latitude": 9.9283,
+          "water_depth_cm": 0.0,
+          "observed_at": "2026-10-31T23:45:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Municipal Dispatch Work Order #DSP-2026-882 Verified By Station 04",
+          "confidence": 0.98,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T05:45:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-003",
+          "location_name": "Goripalayam Thevar Statue Intersection",
+          "hazard_type": "FLOOD",
+          "severity": "LOW",
+          "status": "INVESTIGATING",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1305, 9.931],
+                [78.1355, 9.931],
+                [78.1355, 9.935],
+                [78.1305, 9.935],
+                [78.1305, 9.931]
+              ]
+            ]
+          },
+          "longitude": 78.133,
+          "latitude": 9.933,
+          "water_depth_cm": 15.0,
+          "observed_at": "2026-10-31T23:15:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Ward 38 Dewatering Crew Active",
+          "confidence": 0.93,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-004",
+          "location_name": "Arapalayam Bus Stand Outer Ring",
+          "hazard_type": "FLOOD",
+          "severity": "LOW",
+          "status": "RESOLVED",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1045, 9.9325],
+                [78.1095, 9.9325],
+                [78.1095, 9.9365],
+                [78.1045, 9.9365],
+                [78.1045, 9.9325]
+              ]
+            ]
+          },
+          "longitude": 78.107,
+          "latitude": 9.9345,
+          "water_depth_cm": 0.0,
+          "observed_at": "2026-10-31T23:50:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Madurai West Zone Dewatering Completed",
+          "confidence": 0.95,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T11:20:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-005",
+          "location_name": "Periyar Bus Stand West Gate",
+          "hazard_type": "FLOOD",
+          "severity": "MODERATE",
+          "status": "ACTIVE",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.1115, 9.916],
+                [78.1155, 9.916],
+                [78.1155, 9.919],
+                [78.1115, 9.919],
+                [78.1115, 9.916]
+              ]
+            ]
+          },
+          "longitude": 78.1135,
+          "latitude": 9.9175,
+          "water_depth_cm": 35.0,
+          "observed_at": "2026-10-31T23:40:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "IOT_SENSOR",
+          "source_reference": "Madurai SmartCity Sensor #IR-PRY-01",
+          "confidence": 0.96,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T17:30:00Z"
+        },
+        {
+          "hazard_id": "HAZ-MDU-006",
+          "location_name": "Kalavasal Junction Bypass",
+          "hazard_type": "ROAD_DAMAGE",
+          "severity": "LOW",
+          "status": "INVESTIGATING",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [78.0905, 9.9245],
+                [78.0965, 9.9245],
+                [78.0965, 9.9285],
+                [78.0905, 9.9285],
+                [78.0905, 9.9245]
+              ]
+            ]
+          },
+          "longitude": 78.0935,
+          "latitude": 9.9265,
+          "water_depth_cm": 5.0,
+          "observed_at": "2026-10-31T23:10:00Z",
+          "updated_at": "2026-11-01T00:00:00Z",
+          "source_type": "MUNICIPAL_WARD_OFFICER",
+          "source_reference": "Cold Mix Asphalt Patching Scheduled",
+          "confidence": 0.88,
+          "simulation_id": "SIM-STORM-OCT26",
+          "created_at": "2026-10-31T17:15:00Z"
+        }
+      ]
+    }
+  ],
+  "madurai_places": [
+    {
+      "place_id": "MDU-PLC-001",
+      "name": "Periyar Bus Stand",
+      "address": "Periyar Bus Terminal Complex, West Veli Street, Madurai 625001",
+      "category": "Transit Hub",
+      "longitude": 78.1135,
+      "latitude": 9.9175
+    },
+    {
+      "place_id": "MDU-PLC-002",
+      "name": "Simmakkal",
+      "address": "Simmakkal Junction, North Veli Street, Madurai 625001",
+      "category": "Major Junction",
+      "longitude": 78.1221,
+      "latitude": 9.9282
+    },
+    {
+      "place_id": "MDU-PLC-003",
+      "name": "Goripalayam",
+      "address": "Goripalayam Junction & Dargah, Madurai 625002",
+      "category": "Bridgehead Arterial",
+      "longitude": 78.1325,
+      "latitude": 9.9328
+    },
+    {
+      "place_id": "MDU-PLC-004",
+      "name": "Sellur",
+      "address": "Sellur 50-Feet Road & Railway Bridge, Madurai 625002",
+      "category": "River Corridor",
+      "longitude": 78.1278,
+      "latitude": 9.9412
+    },
+    {
+      "place_id": "MDU-PLC-005",
+      "name": "Arapalayam",
+      "address": "Arapalayam Main Bus Stand, Bypass Road, Madurai 625016",
+      "category": "Intercity Bus Terminal",
+      "longitude": 78.1065,
+      "latitude": 9.9345
+    },
+    {
+      "place_id": "MDU-PLC-006",
+      "name": "Mattuthavani Integrated Bus Terminus",
+      "address": "MIBT (M.G.R. Bus Stand), Melur Road, Madurai 625007",
+      "category": "Major Integrated Terminal",
+      "longitude": 78.1632,
+      "latitude": 9.9498
+    },
+    {
+      "place_id": "MDU-PLC-007",
+      "name": "Vandiyur Teppakulam",
+      "address": "Mariamman Teppakulam, Kamarajar Salai, Madurai 625009",
+      "category": "Heritage & Public Lake",
+      "longitude": 78.1488,
+      "latitude": 9.9142
+    },
+    {
+      "place_id": "MDU-PLC-008",
+      "name": "Kalavasal",
+      "address": "Kalavasal Four-Road Intersection, Theni Main Road, Madurai 625016",
+      "category": "Arterial Highway Junction",
+      "longitude": 78.0935,
+      "latitude": 9.9262
+    }
+  ],
+  "madurai_wards": [
+    {
+      "ward_id": "WARD-038",
+      "ward_name": "Goripalayam - Ward 38",
+      "zone": "North Zone",
+      "councilor_office": "Gokhale Road, Madurai",
+      "population_estimate": 28400,
+      "priority_tier": "HIGH"
+    },
+    {
+      "ward_id": "WARD-042",
+      "ward_name": "Simmakkal / Meenakshi Amman - Ward 42",
+      "zone": "Central Zone",
+      "councilor_office": "North Veli Street, Madurai",
+      "population_estimate": 34100,
+      "priority_tier": "CRITICAL"
+    },
+    {
+      "ward_id": "WARD-056",
+      "ward_name": "Sellur / Kanpalayam - Ward 56",
+      "zone": "North Zone",
+      "councilor_office": "Sellur 60ft Road, Madurai",
+      "population_estimate": 31200,
+      "priority_tier": "CRITICAL"
+    },
+    {
+      "ward_id": "WARD-071",
+      "ward_name": "Periyar / Railway Colony - Ward 71",
+      "zone": "South Zone",
+      "councilor_office": "West Veli Street, Madurai",
+      "population_estimate": 26800,
+      "priority_tier": "HIGH"
+    }
+  ]
+}

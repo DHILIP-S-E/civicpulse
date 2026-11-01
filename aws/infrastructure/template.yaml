@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CivicPulse — Madurai Spatial Lakehouse
+  Complete AWS CloudFormation/SAM Infrastructure Specification:
+  Amazon S3, Apache Iceberg, AWS Glue, Amazon Athena, Amazon Location Service, EventBridge, Lambda.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: development
+    AllowedValues: [development, staging, production]
+    Description: Deployment target stage.
+
+  LakehouseBucketName:
+    Type: String
+    Default: civicpulse-madurai-lakehouse
+    Description: S3 bucket name for Apache Iceberg warehouse, raw telemetry, and Athena results.
+
+Resources:
+  # 1. Primary S3 Lakehouse Bucket
+  SpatialLakehouseBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${LakehouseBucketName}-${AWS::AccountId}-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  # 2. AWS Glue Catalog Database
+  CivicPulseGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: civicpulse_db
+        Description: "CivicPulse Madurai Spatial Lakehouse Apache Iceberg Database"
+        LocationUri: !Sub "s3://${SpatialLakehouseBucket}/civicpulse/warehouse/"
+
+  # 3. Amazon Athena Workgroup
+  CivicPulseAthenaWorkgroup:
+    Type: AWS::Athena::WorkGroup
+    Properties:
+      Name: civicpulse-workgroup
+      Description: "Athena Workgroup for CivicPulse Iceberg Queries & MERGE mutations"
+      State: ENABLED
+      WorkGroupConfiguration:
+        EnforceWorkGroupConfiguration: true
+        PublishCloudWatchMetricsEnabled: true
+        ResultConfiguration:
+          OutputLocation: !Sub "s3://${SpatialLakehouseBucket}/civicpulse/query-results/"
+          EncryptionConfiguration:
+            EncryptionOption: SSE_S3
+
+  # 4. Amazon Location Service Map
+  CivicPulseLocationMap:
+    Type: AWS::Location::Map
+    Properties:
+      MapName: CivicPulseMaduraiMap
+      Description: "Dark cartographic base map for Madurai spatial decision center"
+      Configuration:
+        Style: VectorEsriDarkGrayCanvas
+
+  # 5. Amazon Location Service Place Index
+  CivicPulsePlaceIndex:
+    Type: AWS::Location::PlaceIndex
+    Properties:
+      IndexName: CivicPulseMaduraiPlaces
+      Description: "Madurai Places Search Index with Esri provider"
+      DataSource: Esri
+      DataSourceConfiguration:
+        IntendedUse: SingleUse
+
+  # 6. Amazon Location Service Route Calculator
+  CivicPulseRouteCalculator:
+    Type: AWS::Location::RouteCalculator
+    Properties:
+      CalculatorName: CivicPulseMaduraiRoutes
+      Description: "Hazard-aware route calculator for Madurai urban corridors"
+      DataSource: Esri
+
+  # 7. Amazon Location Service Geofence Collection
+  CivicPulseGeofenceCollection:
+    Type: AWS::Location::GeofenceCollection
+    Properties:
+      CollectionName: CivicPulseMaduraiGeofences
+      Description: "Geofence collection representing active Madurai flood and hazard zones"
+
+  # 8. Lambda Geofence Event Handler
+  GeofenceEventHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CivicPulse-GeofenceEventHandler
+      Runtime: python3.11
+      Handler: geofence_event_handler.handler
+      CodeUri: ../lambda/
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          ATHENA_DATABASE: civicpulse_db
+          ATHENA_RESULTS_S3_URI: !Sub "s3://${SpatialLakehouseBucket}/civicpulse/query-results/"
+      Policies:
+        - AthenaQueryPolicy:
+            WorkGroupName: !Ref CivicPulseAthenaWorkgroup
+        - S3CrudPolicy:
+            BucketName: !Sub "${LakehouseBucketName}-${AWS::AccountId}-${AWS::Region}"
+      Events:
+        GeofenceEventRule:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              source:
+                - aws.geo
+              detail-type:
+                - Location Geofence Event
+              detail:
+                EventType:
+                  - ENTER
+                  - EXIT
+
+Outputs:
+  LakehouseBucket:
+    Description: S3 Bucket hosting the Apache Iceberg Lakehouse
+    Value: !Ref SpatialLakehouseBucket
+
+  GlueDatabase:
+    Description: AWS Glue Database Name
+    Value: !Ref CivicPulseGlueDatabase
+
+  AthenaWorkgroup:
+    Description: Athena Workgroup
+    Value: !Ref CivicPulseAthenaWorkgroup
+
+  LocationMapName:
+    Description: Amazon Location Map Name
+    Value: !Ref CivicPulseLocationMap
+
+  LocationGeofenceCollection:
+    Description: Amazon Location Geofence Collection Name
+    Value: !Ref CivicPulseGeofenceCollection
