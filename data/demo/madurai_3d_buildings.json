@@ -1,0 +1,115 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Sellur Railway Bridge Tower", "height": 45, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.124, 9.938], [78.1255, 9.938], [78.1255, 9.9395], [78.124, 9.9395], [78.124, 9.938]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Sellur Kanpalayam Textile Market", "height": 32, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.126, 9.942], [78.128, 9.942], [78.128, 9.9435], [78.126, 9.9435], [78.126, 9.942]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Sellur Commercial Complex", "height": 38, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.129, 9.938], [78.131, 9.938], [78.131, 9.940], [78.129, 9.940], [78.129, 9.938]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Sellur North Riverbank Apartments", "height": 55, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.122, 9.940], [78.1235, 9.940], [78.1235, 9.942], [78.122, 9.942], [78.122, 9.940]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Simmakkal North Veli Trade Hub", "height": 42, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.120, 9.927], [78.1215, 9.927], [78.1215, 9.9285], [78.120, 9.9285], [78.120, 9.927]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Simmakkal Central Arcade", "height": 36, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.123, 9.925], [78.1245, 9.925], [78.1245, 9.9265], [78.123, 9.9265], [78.123, 9.925]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Vaigai Riverfront Plaza", "height": 48, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.125, 9.929], [78.127, 9.929], [78.127, 9.9305], [78.125, 9.9305], [78.125, 9.929]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Goripalayam Medical Research Block", "height": 60, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.131, 9.933], [78.133, 9.933], [78.133, 9.9348], [78.131, 9.9348], [78.131, 9.933]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Goripalayam Transit Terminal Complex", "height": 35, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.134, 9.931], [78.1355, 9.931], [78.1355, 9.9325], [78.134, 9.9325], [78.134, 9.931]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Shenoy Nagar Commercial Center", "height": 40, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.136, 9.933], [78.138, 9.933], [78.138, 9.935], [78.136, 9.935], [78.136, 9.933]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Periyar Bus Terminal Grand Concourse", "height": 30, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.112, 9.916], [78.1145, 9.916], [78.1145, 9.918], [78.112, 9.918], [78.112, 9.916]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Madurai Railway Junction Headquarters", "height": 50, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.109, 9.916], [78.111, 9.916], [78.111, 9.918], [78.109, 9.918], [78.109, 9.916]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "West Veli Heritage Tower", "height": 45, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.114, 9.919], [78.116, 9.919], [78.116, 9.921], [78.114, 9.921], [78.114, 9.919]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Arapalayam Bus Stand Multi-Storey Terminal", "height": 34, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.105, 9.933], [78.108, 9.933], [78.108, 9.935], [78.105, 9.935], [78.105, 9.933]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Madurai West Bypass Logistics Depot", "height": 26, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.102, 9.934], [78.104, 9.934], [78.104, 9.936], [78.102, 9.936], [78.102, 9.934]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Kalavasal Four-Roads Commercial Center", "height": 52, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.092, 9.925], [78.095, 9.925], [78.095, 9.927], [78.092, 9.927], [78.092, 9.925]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Theni Highway Tech Park", "height": 65, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.089, 9.926], [78.091, 9.926], [78.091, 9.928], [78.089, 9.928], [78.089, 9.926]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Mattuthavani Integrated Bus Concourse A", "height": 38, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.161, 9.948], [78.164, 9.948], [78.164, 9.950], [78.161, 9.950], [78.161, 9.948]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Mattuthavani Integrated Bus Concourse B", "height": 32, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.1645, 9.948], [78.167, 9.948], [78.167, 9.950], [78.1645, 9.950], [78.1645, 9.948]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Melur Road Agricultural Market Tower", "height": 45, "base_height": 0, "color": "#475569" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.161, 9.951], [78.1635, 9.951], [78.1635, 9.953], [78.161, 9.953], [78.161, 9.951]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Vandiyur Teppakulam Mandapam Complex", "height": 28, "base_height": 0, "color": "#334155" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.147, 9.913], [78.1485, 9.913], [78.1485, 9.9145], [78.147, 9.9145], [78.147, 9.913]]] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Kamarajar Salai Commercial Precinct", "height": 36, "base_height": 0, "color": "#1E293B" },
+      "geometry": { "type": "Polygon", "coordinates": [[[78.150, 9.914], [78.152, 9.914], [78.152, 9.9158], [78.150, 9.9158], [78.150, 9.914]]] }
+    }
+  ]
+}

@@ -21,6 +21,7 @@ interface TopHeaderProps {
   isBackendHealthy: boolean;
   activeSnapshotStage?: string;
   isAwsConnected?: boolean;
+  onToggleAwsMode?: () => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
@@ -29,7 +30,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onOpenArchitecture,
   isBackendHealthy,
   activeSnapshotStage,
-  isAwsConnected = false,
+  isAwsConnected = true,
+  onToggleAwsMode,
 }) => {
   return (
     <header className="h-14 bg-[#0B0F19]/95 border-b border-border-subtle px-4 flex items-center justify-between z-20 select-none backdrop-blur-md">
@@ -112,16 +114,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         </div>
 
         {/* Live / Demo Mode Badge */}
-        <div
-          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-medium ${
+        <button
+          onClick={onToggleAwsMode}
+          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-medium transition-all ${
             isAwsConnected
-              ? 'bg-emerald-950/60 border-emerald-700/50 text-emerald-300'
-              : 'bg-amber-950/60 border-amber-700/50 text-amber-300'
+              ? 'bg-emerald-950/80 border-emerald-600/70 text-emerald-300 shadow-sm'
+              : 'bg-amber-950/80 border-amber-600/70 text-amber-300'
           }`}
+          title="Click to toggle between Live AWS Mode & Deterministic Demo Mode"
         >
-          {isAwsConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
+          {isAwsConnected ? <Wifi className="w-3.5 h-3.5 text-emerald-400" /> : <WifiOff className="w-3.5 h-3.5 text-amber-400" />}
           <span>{isAwsConnected ? 'LIVE AWS MODE' : 'DEMO MODE'}</span>
-        </div>
+        </button>
 
         {/* Architecture Drawer Toggle */}
         <button

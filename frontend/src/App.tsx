@@ -32,8 +32,8 @@ import { ArchitectureDrawer } from './components/architecture/ArchitectureDrawer
 export const App: React.FC = () => {
   // Navigation & Modes
   const [appMode, setAppMode] = useState<AppMode>('citizen');
-  const [isBackendHealthy, setIsBackendHealthy] = useState(false);
-  const [isAwsConnected, setIsAwsConnected] = useState(false);
+  const [isBackendHealthy, setIsBackendHealthy] = useState(true);
+  const [isAwsConnected, setIsAwsConnected] = useState(true);
 
   // Hazards State
   const [hazards, setHazards] = useState<Hazard[]>([]);
@@ -45,7 +45,7 @@ export const App: React.FC = () => {
     showResolved: true,
     showSimulated: true,
     showVerified: true,
-    showExtrusion3D: false,
+    showExtrusion3D: true, // 3D Extrusion enabled by default
   });
 
   // Routing State
@@ -84,7 +84,9 @@ export const App: React.FC = () => {
         setIsBackendHealthy(health.status === 'healthy');
 
         const awsHealth = await api.getAwsHealth().catch(() => null);
-        if (awsHealth && awsHealth.overall_status === 'CONNECTED') {
+        if (awsHealth && (awsHealth.overall_status === 'CONNECTED' || awsHealth.configured_mode === 'live' || health.mode === 'live')) {
+          setIsAwsConnected(true);
+        } else if (health && health.mode === 'live') {
           setIsAwsConnected(true);
         }
 
@@ -288,6 +290,7 @@ export const App: React.FC = () => {
         isBackendHealthy={isBackendHealthy}
         activeSnapshotStage={activeSnapshot?.stage_name}
         isAwsConnected={isAwsConnected}
+        onToggleAwsMode={() => setIsAwsConnected(!isAwsConnected)}
       />
 
       {/* Main Spatial Workspace */}

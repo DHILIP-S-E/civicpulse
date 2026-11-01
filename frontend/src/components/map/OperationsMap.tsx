@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Hazard, RouteDetail, HazardIntersectionInfo } from '../../types';
+import { Hazard, RouteDetail } from '../../types';
+
+// Import 3D Buildings
+import buildingsGeoJSON from '../../../../data/demo/madurai_3d_buildings.json';
 
 interface OperationsMapProps {
   hazards: Hazard[];
@@ -24,17 +27,20 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
   vehiclePosition,
   originCoords,
   destCoords,
-  showExtrusion3D = false,
+  showExtrusion3D = true, // Enabled by default for true 3D volumetric view
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isOrbiting, setIsOrbiting] = useState(false);
+  const orbitInterval = useRef<any>(null);
+  const floatingMarkersRef = useRef<maplibregl.Marker[]>([]);
 
   // Initialize MapLibre
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
 
-    // Official ESRI World Dark Gray Canvas (High-resolution, free public GIS basemap, matching Amazon Location Esri Dark)
+    // Official ESRI World Dark Gray Canvas with high-contrast road network
     const map = new maplibregl.Map({
       container: mapContainer.current,
       style: {
@@ -74,10 +80,10 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
           }
         ]
       },
-      center: [78.1198, 9.9252], // Madurai Center
-      zoom: 12.8,
-      pitch: 45,
-      bearing: -8,
+      center: [78.125, 9.932], // Centered between Sellur and Goripalayam
+      zoom: 13.5,
+      pitch: 60, // Strong 3D oblique perspective
+      bearing: -20,
       attributionControl: false
     });
 
@@ -87,13 +93,68 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     map.on('load', () => {
       setMapLoaded(true);
 
-      // 1. Hazards GeoJSON Source
+      // ==========================================
+      // 1. 3D URBAN BUILDINGS LAYER
+      // ==========================================
+      map.addSource('3d-buildings-source', {
+        type: 'geojson',
+        data: buildingsGeoJSON as any
+      });
+
+      map.addLayer({
+        id: '3d-buildings-extrusion',
+        type: 'fill-extrusion',
+        source: '3d-buildings-source',
+        paint: {
+          'fill-extrusion-color': [
+            'coalesce',
+            ['get', 'color'],
+            '#334155'
+          ],
+          'fill-extrusion-height': ['get', 'height'],
+          'fill-extrusion-base': ['get', 'base_height'],
+          'fill-extrusion-opacity': 0.88
+        }
+      });
+
+      // ==========================================
+      // 2. 3D VOLUMETRIC WATER INUNDATION LAYER
+      // ==========================================
       map.addSource('hazards-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
       });
 
-      // Hazard Fill Layer
+      // 3D Volumetric Water Prisms
+      map.addLayer({
+        id: 'hazards-extrusion',
+        type: 'fill-extrusion',
+        source: 'hazards-source',
+        paint: {
+          'fill-extrusion-color': [
+            'match',
+            ['get', 'status'],
+            'RESOLVED', '#10B981',
+            [
+              'match',
+              ['get', 'severity'],
+              'CRITICAL', '#EF4444',
+              'MODERATE', '#F59E0B',
+              '#06B6D4'
+            ]
+          ],
+          // True volumetric scale: height proportional to water depth cm
+          'fill-extrusion-height': [
+            '*',
+            ['coalesce', ['get', 'water_depth_cm'], 25],
+            3.2
+          ],
+          'fill-extrusion-base': 0,
+          'fill-extrusion-opacity': 0.82
+        }
+      });
+
+      // 2D Ground Footprint
       map.addLayer({
         id: 'hazards-fill',
         type: 'fill',
@@ -111,47 +172,11 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
               '#3B82F6'
             ]
           ],
-          'fill-opacity': [
-            'match',
-            ['get', 'status'],
-            'RESOLVED', 0.25,
-            0.42
-          ]
+          'fill-opacity': 0.35
         }
       });
 
-      // Hazard 3D Extrusion Layer
-      map.addLayer({
-        id: 'hazards-extrusion',
-        type: 'fill-extrusion',
-        source: 'hazards-source',
-        layout: {
-          visibility: showExtrusion3D ? 'visible' : 'none'
-        },
-        paint: {
-          'fill-extrusion-color': [
-            'match',
-            ['get', 'status'],
-            'RESOLVED', '#10B981',
-            [
-              'match',
-              ['get', 'severity'],
-              'CRITICAL', '#EF4444',
-              'MODERATE', '#F59E0B',
-              '#3B82F6'
-            ]
-          ],
-          'fill-extrusion-height': [
-            '*',
-            ['coalesce', ['get', 'water_depth_cm'], 10],
-            2.5 // scale factor for visual clarity
-          ],
-          'fill-extrusion-base': 0,
-          'fill-extrusion-opacity': 0.75
-        }
-      });
-
-      // Hazard Outline
+      // Hazard Glowing Outline
       map.addLayer({
         id: 'hazards-outline',
         type: 'line',
@@ -169,11 +194,11 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
               '#60A5FA'
             ]
           ],
-          'line-width': 2.5
+          'line-width': 3
         }
       });
 
-      // Click event on hazard polygons
+      // Click listener on hazards
       map.on('click', 'hazards-fill', (e) => {
         if (!e.features || !e.features[0]) return;
         const props = e.features[0].properties;
@@ -192,7 +217,9 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         map.getCanvas().style.cursor = '';
       });
 
-      // 2. Standard Route (Red Dashed)
+      // ==========================================
+      // 3. ROUTES & CORRIDORS
+      // ==========================================
       map.addSource('standard-route-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -204,13 +231,12 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         source: 'standard-route-source',
         paint: {
           'line-color': '#EF4444',
-          'line-width': 4,
+          'line-width': 4.5,
           'line-dasharray': [2, 2],
-          'line-opacity': 0.85
+          'line-opacity': 0.95
         }
       });
 
-      // 3. Safe Corridor Route (Green Solid)
       map.addSource('safe-route-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -222,12 +248,12 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         source: 'safe-route-source',
         paint: {
           'line-color': '#10B981',
-          'line-width': 5,
+          'line-width': 6,
           'line-opacity': 0.95
         }
       });
 
-      // 4. Intersections Points
+      // Intersections Markers
       map.addSource('intersections-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -238,15 +264,15 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         type: 'circle',
         source: 'intersections-source',
         paint: {
-          'circle-radius': 9,
+          'circle-radius': 11,
           'circle-color': '#EF4444',
-          'circle-stroke-width': 2.5,
+          'circle-stroke-width': 3,
           'circle-stroke-color': '#FFFFFF',
-          'circle-opacity': 0.9
+          'circle-opacity': 0.95
         }
       });
 
-      // 5. Waypoints (Origin/Dest)
+      // Origin / Destination Waypoints
       map.addSource('waypoints-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -257,14 +283,14 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         type: 'circle',
         source: 'waypoints-source',
         paint: {
-          'circle-radius': 7,
+          'circle-radius': 8,
           'circle-color': ['get', 'color'],
-          'circle-stroke-width': 2,
+          'circle-stroke-width': 2.5,
           'circle-stroke-color': '#FFFFFF'
         }
       });
 
-      // 6. Municipal Vehicle Position
+      // Municipal Vehicle Marker
       map.addSource('vehicle-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -275,9 +301,9 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         type: 'circle',
         source: 'vehicle-source',
         paint: {
-          'circle-radius': 8,
+          'circle-radius': 9,
           'circle-color': '#06B6D4',
-          'circle-stroke-width': 3,
+          'circle-stroke-width': 3.5,
           'circle-stroke-color': '#FFFFFF'
         }
       });
@@ -286,12 +312,13 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     mapRef.current = map;
 
     return () => {
+      if (orbitInterval.current) clearInterval(orbitInterval.current);
       map.remove();
       mapRef.current = null;
     };
   }, []);
 
-  // Update Hazard Geometries
+  // Update Hazard Geometries & 3D Floating Badges
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
     const source = mapRef.current.getSource('hazards-source') as maplibregl.GeoJSONSource;
@@ -305,7 +332,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         severity: h.severity,
         status: h.status,
         hazard_type: h.hazard_type,
-        water_depth_cm: h.water_depth_cm ?? 0,
+        water_depth_cm: h.water_depth_cm ?? 20,
       },
       geometry: h.geometry
     }));
@@ -313,6 +340,34 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     source.setData({
       type: 'FeatureCollection',
       features
+    });
+
+    // Update 3D Floating HTML Billboards
+    floatingMarkersRef.current.forEach(m => m.remove());
+    floatingMarkersRef.current = [];
+
+    hazards.forEach(h => {
+      const el = document.createElement('div');
+      el.className = 'group cursor-pointer select-none';
+      const isResolved = h.status === 'RESOLVED';
+      const colorBg = isResolved ? 'bg-emerald-950/90 border-emerald-600 text-emerald-300' : (h.severity === 'CRITICAL' ? 'bg-red-950/90 border-red-600 text-red-200' : 'bg-amber-950/90 border-amber-600 text-amber-200');
+
+      el.innerHTML = `
+        <div class="px-2 py-1 rounded-md border font-mono text-[10px] font-bold shadow-xl flex items-center space-x-1.5 backdrop-blur-md transform -translate-y-8 ${colorBg}">
+          <span class="w-2 h-2 rounded-full ${isResolved ? 'bg-emerald-400' : 'bg-red-500 animate-pulse'}"></span>
+          <span>${h.location_name.split('/')[0].trim()}</span>
+          <span class="opacity-80">(${h.water_depth_cm ?? 0}cm)</span>
+        </div>
+        <div class="w-0.5 h-6 bg-cyan-400/80 mx-auto -translate-y-8"></div>
+      `;
+
+      el.addEventListener('click', () => onSelectHazard(h));
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([h.longitude, h.latitude])
+        .addTo(mapRef.current!);
+
+      floatingMarkersRef.current.push(marker);
     });
   }, [hazards, mapLoaded]);
 
@@ -329,64 +384,37 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
 
-    // Standard Route
     const stdSource = mapRef.current.getSource('standard-route-source') as maplibregl.GeoJSONSource;
     if (stdSource) {
       if (standardRoute && standardRoute.geometry.length > 0) {
         stdSource.setData({
           type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: standardRoute.geometry
-              }
-            }
-          ]
+          features: [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: standardRoute.geometry } }]
         });
       } else {
         stdSource.setData({ type: 'FeatureCollection', features: [] });
       }
     }
 
-    // Safe Corridor Route
     const safeSource = mapRef.current.getSource('safe-route-source') as maplibregl.GeoJSONSource;
     if (safeSource) {
       if (safeRoute && safeRoute.geometry.length > 0) {
         safeSource.setData({
           type: 'FeatureCollection',
-          features: [
-            {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: safeRoute.geometry
-              }
-            }
-          ]
+          features: [{ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: safeRoute.geometry } }]
         });
       } else {
         safeSource.setData({ type: 'FeatureCollection', features: [] });
       }
     }
 
-    // Intersections Markers
     const intSource = mapRef.current.getSource('intersections-source') as maplibregl.GeoJSONSource;
     if (intSource) {
       if (standardRoute && standardRoute.hazard_intersections.length > 0) {
         const intFeatures = standardRoute.hazard_intersections.map(i => ({
           type: 'Feature' as const,
-          properties: {
-            hazard_id: i.hazard_id,
-            location_name: i.location_name
-          },
-          geometry: {
-            type: 'Point' as const,
-            coordinates: i.intersection_point
-          }
+          properties: { hazard_id: i.hazard_id, location_name: i.location_name },
+          geometry: { type: 'Point' as const, coordinates: i.intersection_point }
         }));
         intSource.setData({ type: 'FeatureCollection', features: intFeatures });
       } else {
@@ -395,7 +423,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     }
   }, [standardRoute, safeRoute, mapLoaded]);
 
-  // Update Waypoints (Origin & Destination)
+  // Waypoints
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
     const source = mapRef.current.getSource('waypoints-source') as maplibregl.GeoJSONSource;
@@ -403,24 +431,15 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
 
     const features = [];
     if (originCoords) {
-      features.push({
-        type: 'Feature' as const,
-        properties: { color: '#3B82F6', label: 'Origin' },
-        geometry: { type: 'Point' as const, coordinates: originCoords }
-      });
+      features.push({ type: 'Feature' as const, properties: { color: '#3B82F6', label: 'Origin' }, geometry: { type: 'Point' as const, coordinates: originCoords } });
     }
     if (destCoords) {
-      features.push({
-        type: 'Feature' as const,
-        properties: { color: '#10B981', label: 'Destination' },
-        geometry: { type: 'Point' as const, coordinates: destCoords }
-      });
+      features.push({ type: 'Feature' as const, properties: { color: '#10B981', label: 'Destination' }, geometry: { type: 'Point' as const, coordinates: destCoords } });
     }
-
     source.setData({ type: 'FeatureCollection', features });
   }, [originCoords, destCoords, mapLoaded]);
 
-  // Update Municipal Vehicle Marker
+  // Vehicle
   useEffect(() => {
     if (!mapRef.current || !mapLoaded) return;
     const source = mapRef.current.getSource('vehicle-source') as maplibregl.GeoJSONSource;
@@ -429,37 +448,84 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     if (vehiclePosition) {
       source.setData({
         type: 'FeatureCollection',
-        features: [
-          {
-            type: 'Feature',
-            properties: { label: 'Simulated Municipal Truck' },
-            geometry: {
-              type: 'Point',
-              coordinates: vehiclePosition
-            }
-          }
-        ]
+        features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: vehiclePosition } }]
       });
     } else {
       source.setData({ type: 'FeatureCollection', features: [] });
     }
   }, [vehiclePosition, mapLoaded]);
 
-  // Pan to selected hazard
+  // Fly to selected hazard
   useEffect(() => {
     if (!mapRef.current || !selectedHazard) return;
     mapRef.current.flyTo({
       center: [selectedHazard.longitude, selectedHazard.latitude],
-      zoom: 14.5,
+      zoom: 15.2,
+      pitch: 65,
+      bearing: -35,
       essential: true,
-      duration: 1000
+      duration: 1200
     });
   }, [selectedHazard]);
+
+  // Camera presets
+  const setCamera3D = () => {
+    if (!mapRef.current) return;
+    mapRef.current.easeTo({ pitch: 62, zoom: 13.8, bearing: -25, duration: 1000 });
+  };
+
+  const setCamera2D = () => {
+    if (!mapRef.current) return;
+    mapRef.current.easeTo({ pitch: 0, bearing: 0, duration: 1000 });
+  };
+
+  const toggleCinematicOrbit = () => {
+    if (!mapRef.current) return;
+    if (isOrbiting) {
+      if (orbitInterval.current) clearInterval(orbitInterval.current);
+      setIsOrbiting(false);
+    } else {
+      setIsOrbiting(true);
+      mapRef.current.easeTo({ pitch: 65, zoom: 14.2, duration: 800 });
+      orbitInterval.current = setInterval(() => {
+        if (!mapRef.current) return;
+        mapRef.current.setBearing((mapRef.current.getBearing() + 1.2) % 360);
+      }, 50);
+    }
+  };
 
   return (
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="w-full h-full" />
+
+      {/* Floating 3D Geospatial Camera Control Bar */}
+      <div className="absolute top-4 left-4 z-10 glass-panel p-1.5 rounded-lg flex items-center space-x-1.5 text-xs font-mono shadow-xl border border-border-subtle">
+        <button
+          onClick={setCamera3D}
+          className="px-2.5 py-1 rounded bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 font-semibold transition-colors"
+          title="Tilt to 3D Perspective with Volumetric Prisms"
+        >
+          3D Perspective (60°)
+        </button>
+        <button
+          onClick={setCamera2D}
+          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-gray-300 border border-border-subtle transition-colors"
+          title="Flat 2D Plan View"
+        >
+          2D Plan (0°)
+        </button>
+        <button
+          onClick={toggleCinematicOrbit}
+          className={`px-2.5 py-1 rounded font-semibold border transition-colors ${
+            isOrbiting
+              ? 'bg-amber-600 text-white border-amber-400 animate-pulse'
+              : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border-cyan-500/40'
+          }`}
+          title="Rotate camera around city in 3D orbit"
+        >
+          {isOrbiting ? '⏹ Stop Orbit' : '🔄 3D Orbit'}
+        </button>
+      </div>
     </div>
   );
 };
-
