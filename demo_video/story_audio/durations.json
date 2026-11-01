@@ -1,0 +1,32 @@
+[
+  {
+    "index": 0,
+    "id": "act1_crisis",
+    "duration": 28.536,
+    "silence": 1.5
+  },
+  {
+    "index": 1,
+    "id": "act2_observe_3d",
+    "duration": 30.936,
+    "silence": 2.0
+  },
+  {
+    "index": 2,
+    "id": "act3_safe_routing",
+    "duration": 28.68,
+    "silence": 2.0
+  },
+  {
+    "index": 3,
+    "id": "act4_municipal_lakehouse",
+    "duration": 30.816,
+    "silence": 1.5
+  },
+  {
+    "index": 4,
+    "id": "act5_closing",
+    "duration": 15.0,
+    "silence": 1.0
+  }
+]
