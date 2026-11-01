@@ -179,3 +179,4 @@ export const HistoricalTimelineWorkspace: React.FC = () => {
     </div>
   );
 };
+

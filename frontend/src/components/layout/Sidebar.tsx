@@ -6,7 +6,7 @@ import {
   History,
   Truck,
   BarChart3,
-  Server,
+  ShieldCheck,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'timeline', label: 'Historical Timeline', icon: History },
   { id: 'operations', label: 'Municipal Fleet', icon: Truck },
   { id: 'analytics', label: 'Analytics & Triage', icon: BarChart3 },
-  { id: 'architecture', label: 'Cloud Architecture', icon: Server },
+  { id: 'architecture', label: 'Platform Governance', icon: ShieldCheck },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -113,3 +113,4 @@ export const Sidebar: React.FC = () => {
     </aside>
   );
 };
+

@@ -144,3 +144,4 @@ export const AnalyticsWorkspace: React.FC = () => {
     </div>
   );
 };
+

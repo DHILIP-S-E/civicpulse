@@ -186,3 +186,4 @@ export const HazardManagementWorkspace: React.FC = () => {
     </div>
   );
 };
+

@@ -177,3 +177,4 @@ export const HazardInspectorPanel: React.FC<HazardInspectorPanelProps> = ({
     </div>
   );
 };
+

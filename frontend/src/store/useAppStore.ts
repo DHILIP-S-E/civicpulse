@@ -215,3 +215,4 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
   removeToast: (id) =>
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }))
 }));
+
