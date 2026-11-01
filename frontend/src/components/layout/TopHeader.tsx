@@ -1,24 +1,13 @@
 import React from 'react';
 import { AppMode } from '../../types';
-import {
-  Layers,
-  Database,
-  MapPin,
-  Clock,
-  Navigation,
-  ShieldCheck,
-  Radio,
-  Server
-} from 'lucide-react';
+import { Navigation, ShieldCheck, Activity, Info } from 'lucide-react';
 
 interface TopHeaderProps {
   appMode: AppMode;
   setAppMode: (mode: AppMode) => void;
-  onOpenArchitecture: () => void;
+  onOpenArchitecture?: () => void;
   isBackendHealthy: boolean;
   activeSnapshotStage?: string;
-  isAwsConnected?: boolean;
-  onToggleAwsMode?: () => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({
@@ -26,113 +15,79 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   setAppMode,
   onOpenArchitecture,
   isBackendHealthy,
-  activeSnapshotStage,
-  isAwsConnected = true,
-  onToggleAwsMode,
 }) => {
   return (
-    <header className="h-12 bg-surface border-b border-terminal-border px-4 flex items-center justify-between select-none z-30">
-      {/* Brand & Lakehouse Identity */}
+    <header className="h-14 bg-[#111827] border-b border-[rgba(148,163,184,0.15)] px-4 sm:px-6 flex items-center justify-between select-none z-30">
+      {/* Brand Identity */}
       <div className="flex items-center space-x-3">
-        {/* Monogram mark */}
-        <div className="w-7 h-7 bg-raised border border-terminal-border flex items-center justify-center rounded-sm text-accent">
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 12h4l3 8 4-16 3 8h4" />
+        <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-sm">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
           </svg>
         </div>
 
-        <div className="flex items-baseline space-x-2">
-          <span className="font-semibold text-sm tracking-wide text-white">CIVICPULSE</span>
-          <span className="text-xs text-terminal-muted hidden sm:inline">
-            Madurai Spatial Lakehouse
-          </span>
-        </div>
-
-        <div className="h-3.5 w-px bg-terminal-border mx-1 hidden lg:block" />
-
-        {/* Lakehouse Scope Sub-items */}
-        <div className="hidden lg:flex items-center space-x-3 text-xs text-terminal-muted tabular-nums">
-          <span className="flex items-center space-x-1">
-            <Database className="w-3 h-3 text-terminal-subtle" />
-            <span>Apache Iceberg v2</span>
-          </span>
-          <span className="text-terminal-subtle">/</span>
-          <span className="flex items-center space-x-1">
-            <MapPin className="w-3 h-3 text-terminal-subtle" />
-            <span>Amazon Location</span>
-          </span>
-          <span className="text-terminal-subtle">/</span>
-          <span className="flex items-center space-x-1">
-            <Server className="w-3 h-3 text-terminal-subtle" />
-            <span>ap-south-1</span>
+        <div className="flex flex-col">
+          <div className="flex items-center space-x-2">
+            <span className="font-bold text-sm tracking-wide text-white">CivicPulse</span>
+            <span className="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-400 border border-blue-500/30">
+              Live
+            </span>
+          </div>
+          <span className="text-xs text-slate-400 font-normal">
+            Madurai Flood Intelligence
           </span>
         </div>
       </div>
 
-      {/* Primary Navigation - Underline Accent Style (Taste skill move) */}
-      <nav className="flex items-center space-x-6 h-full text-xs font-medium">
+      {/* Primary Navigation - Two Screen Tabs */}
+      <nav className="flex items-center bg-[#0B0F19] p-1 rounded-lg border border-[rgba(148,163,184,0.15)]">
         <button
           onClick={() => setAppMode('citizen')}
-          className={`h-full flex items-center space-x-1.5 transition-colors relative ${
+          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
             appMode === 'citizen'
-              ? 'text-white font-semibold'
-              : 'text-terminal-muted hover:text-white'
+              ? 'bg-blue-600 text-white shadow-sm font-semibold'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
           }`}
         >
           <Navigation className="w-3.5 h-3.5" />
-          <span>Route Exposure Engine</span>
-          {appMode === 'citizen' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
-          )}
+          <span>🛣️ Plan My Route</span>
         </button>
 
         <button
           onClick={() => setAppMode('municipal')}
-          className={`h-full flex items-center space-x-1.5 transition-colors relative ${
+          className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
             appMode === 'municipal'
-              ? 'text-white font-semibold'
-              : 'text-terminal-muted hover:text-white'
+              ? 'bg-blue-600 text-white shadow-sm font-semibold'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800/40'
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Municipal Operations & Lakehouse Queue</span>
-          {appMode === 'municipal' && (
-            <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
-          )}
+          <span>🚛 Command Center</span>
         </button>
       </nav>
 
-      {/* System Telemetry & Utilities */}
-      <div className="flex items-center space-x-3 text-xs">
-        {/* Snapshot Commit Indicator */}
-        <div className="hidden md:flex items-center space-x-1.5 text-terminal-muted text-xs tabular-nums px-2 py-1 bg-ground border border-terminal-border rounded-sm">
-          <Clock className="w-3 h-3 text-terminal-subtle" />
-          <span>{activeSnapshotStage || 'Snapshot: v4-latest'}</span>
+      {/* Live Status & Information */}
+      <div className="flex items-center space-x-3">
+        {/* Status Pill */}
+        <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+          <span className="relative flex h-2 w-2">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isBackendHealthy ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${isBackendHealthy ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+          </span>
+          <span className="hidden md:inline">Live Data · Madurai · Updated 2 min ago</span>
+          <span className="md:hidden">Madurai Live</span>
         </div>
 
-        {/* Live AWS Mode toggle */}
-        <button
-          onClick={onToggleAwsMode}
-          className={`flex items-center space-x-1.5 px-2.5 py-1 text-xs font-mono rounded-sm border transition-colors ${
-            isAwsConnected
-              ? 'bg-[#15231e] border-[#254d3e] text-[#5fc39c]'
-              : 'bg-[#261f18] border-[#523d24] text-[#d9a441]'
-          }`}
-          title="Active cloud execution mode"
-        >
-          <Radio className="w-3 h-3" />
-          <span>{isAwsConnected ? 'AWS CONNECTED' : 'DEMO MODE'}</span>
-        </button>
-
-        {/* Architecture Inspector */}
-        <button
-          onClick={onOpenArchitecture}
-          className="flex items-center space-x-1.5 px-2.5 py-1 text-xs text-white bg-raised hover:bg-[#25252b] border border-terminal-border rounded-sm transition-colors"
-          title="Inspect Lakehouse Architecture & Verified Data Flow"
-        >
-          <Layers className="w-3.5 h-3.5 text-terminal-muted" />
-          <span className="hidden sm:inline">Architecture</span>
-        </button>
+        {/* System Info Link */}
+        {onOpenArchitecture && (
+          <button
+            onClick={onOpenArchitecture}
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-md border border-[rgba(148,163,184,0.15)] transition-colors"
+            title="System & Data Architecture"
+          >
+            <Info className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </header>
   );

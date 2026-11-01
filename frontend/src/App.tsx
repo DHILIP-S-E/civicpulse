@@ -117,7 +117,7 @@ export const App: React.FC = () => {
       try {
         const ev = await api.getEvents();
         setEvents(ev);
-      } catch (_) {}
+      } catch (_) { }
     }, 8000);
 
     return () => clearInterval(eventPoll);

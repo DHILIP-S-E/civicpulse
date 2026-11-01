@@ -27,7 +27,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
   vehiclePosition,
   originCoords,
   destCoords,
-  showExtrusion3D = true, // Enabled by default for true 3D volumetric view
+  showExtrusion3D = true,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
@@ -40,7 +40,6 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
 
-    // Official ESRI World Dark Gray Canvas with high-contrast road network
     const map = new maplibregl.Map({
       container: mapContainer.current,
       style: {
@@ -80,9 +79,9 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
           }
         ]
       },
-      center: [78.125, 9.932], // Centered between Sellur and Goripalayam
+      center: [78.125, 9.932],
       zoom: 13.5,
-      pitch: 60, // Strong 3D oblique perspective
+      pitch: 60,
       bearing: -20,
       attributionControl: false
     });
@@ -93,9 +92,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     map.on('load', () => {
       setMapLoaded(true);
 
-      // ==========================================
-      // 1. 3D URBAN BUILDINGS LAYER
-      // ==========================================
+      // 1. 3D Urban Buildings Layer
       map.addSource('3d-buildings-source', {
         type: 'geojson',
         data: buildingsGeoJSON as any
@@ -117,9 +114,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         }
       });
 
-      // ==========================================
-      // 2. 3D VOLUMETRIC WATER INUNDATION LAYER
-      // ==========================================
+      // 2. 3D Volumetric Water Inundation Layer
       map.addSource('hazards-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -143,7 +138,6 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
               '#06B6D4'
             ]
           ],
-          // True volumetric scale: height proportional to water depth cm
           'fill-extrusion-height': [
             '*',
             ['coalesce', ['get', 'water_depth_cm'], 25],
@@ -217,9 +211,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
         map.getCanvas().style.cursor = '';
       });
 
-      // ==========================================
-      // 3. ROUTES & CORRIDORS
-      // ==========================================
+      // 3. Routes & Corridors
       map.addSource('standard-route-source', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] }
@@ -350,15 +342,17 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
       const el = document.createElement('div');
       el.className = 'group cursor-pointer select-none';
       const isResolved = h.status === 'RESOLVED';
-      const colorBg = isResolved ? 'bg-emerald-950/90 border-emerald-600 text-emerald-300' : (h.severity === 'CRITICAL' ? 'bg-red-950/90 border-red-600 text-red-200' : 'bg-amber-950/90 border-amber-600 text-amber-200');
+      const colorBg = isResolved
+        ? 'bg-emerald-950/90 border-emerald-500 text-emerald-200'
+        : (h.severity === 'CRITICAL' ? 'bg-red-950/90 border-red-500 text-red-200' : 'bg-amber-950/90 border-amber-500 text-amber-200');
 
       el.innerHTML = `
-        <div class="px-2 py-1 rounded-md border font-mono text-[10px] font-bold shadow-xl flex items-center space-x-1.5 backdrop-blur-md transform -translate-y-8 ${colorBg}">
+        <div class="px-2.5 py-1 rounded-md border text-xs font-semibold shadow-xl flex items-center space-x-1.5 backdrop-blur-md transform -translate-y-8 ${colorBg}">
           <span class="w-2 h-2 rounded-full ${isResolved ? 'bg-emerald-400' : 'bg-red-500 animate-pulse'}"></span>
           <span>${h.location_name.split('/')[0].trim()}</span>
-          <span class="opacity-80">(${h.water_depth_cm ?? 0}cm)</span>
+          <span class="opacity-80 font-normal">(${h.water_depth_cm ?? 0}cm)</span>
         </div>
-        <div class="w-0.5 h-6 bg-cyan-400/80 mx-auto -translate-y-8"></div>
+        <div class="w-0.5 h-6 bg-blue-400/80 mx-auto -translate-y-8"></div>
       `;
 
       el.addEventListener('click', () => onSelectHazard(h));
@@ -468,7 +462,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     });
   }, [selectedHazard]);
 
-  // Camera presets
+  // Camera presets with friendly human labels
   const setCamera3D = () => {
     if (!mapRef.current) return;
     mapRef.current.easeTo({ pitch: 62, zoom: 13.8, bearing: -25, duration: 1000 });
@@ -498,32 +492,29 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="w-full h-full" />
 
-      {/* 3D Geospatial Camera Controls */}
-      <div className="absolute top-4 left-4 z-10 bg-surface border border-terminal-border p-1 flex items-center space-x-1 text-xs select-none">
+      {/* Human Camera Controls */}
+      <div className="absolute top-4 left-4 z-10 bg-[#111827]/90 backdrop-blur-md border border-[rgba(148,163,184,0.2)] p-1 rounded-lg flex items-center space-x-1 text-xs select-none shadow-lg">
         <button
           onClick={setCamera3D}
-          className="px-2.5 py-1 bg-raised hover:bg-[#25252c] text-white border border-terminal-border font-medium transition-colors"
-          title="Tilt to 3D perspective with extruded buildings and water volumes"
+          className="px-3 py-1.5 bg-[#1F2937] hover:bg-slate-700 text-white rounded font-medium transition-colors"
         >
-          3D Perspective
+          3D View
         </button>
         <button
           onClick={setCamera2D}
-          className="px-2.5 py-1 bg-surface hover:bg-raised text-terminal-muted hover:text-white border border-terminal-border transition-colors"
-          title="Top-down 2D plan view"
+          className="px-3 py-1.5 hover:bg-[#1F2937] text-slate-300 hover:text-white rounded font-medium transition-colors"
         >
-          2D Plan
+          2D View
         </button>
         <button
           onClick={toggleCinematicOrbit}
-          className={`px-2.5 py-1 font-medium border border-terminal-border transition-colors ${
+          className={`px-3 py-1.5 rounded font-medium transition-colors ${
             isOrbiting
-              ? 'bg-raised text-white border-accent'
-              : 'bg-surface hover:bg-raised text-terminal-muted hover:text-white'
+              ? 'bg-blue-600 text-white'
+              : 'hover:bg-[#1F2937] text-slate-300 hover:text-white'
           }`}
-          title="Rotate camera around city"
         >
-          {isOrbiting ? 'Stop Orbit' : 'Orbit 3D'}
+          {isOrbiting ? 'Stop Orbit' : 'Orbit'}
         </button>
       </div>
     </div>

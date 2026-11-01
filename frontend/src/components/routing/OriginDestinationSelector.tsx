@@ -6,8 +6,8 @@ import {
   Car,
   Footprints,
   Truck,
-  ShieldCheck,
-  Check
+  Check,
+  MapPin
 } from 'lucide-react';
 
 interface RoutePreset {
@@ -17,7 +17,7 @@ interface RoutePreset {
   destination: Place;
 }
 
-const MADURAI_PRESETS: RoutePreset[] = [
+export const MADURAI_PRESETS: RoutePreset[] = [
   {
     id: 'preset-1',
     name: 'Periyar Bus Stand → Mattuthavani',
@@ -103,7 +103,6 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
   onSetDestination,
 }) => {
   const [profile, setProfile] = useState<'Car' | 'Walking' | 'Truck'>('Car');
-  const [avoidHazards, setAvoidHazards] = useState(true);
 
   React.useEffect(() => {
     if (!selectedOrigin && !selectedDestination) {
@@ -127,18 +126,28 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
 
   const handleCalculate = () => {
     if (selectedOrigin && selectedDestination) {
-      onCalculateRoute(selectedOrigin, selectedDestination, profile, avoidHazards);
+      onCalculateRoute(selectedOrigin, selectedDestination, profile, true);
     }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Route Corridors Selection */}
+    <div className="bg-[#111827] rounded-xl p-4 border border-[rgba(148,163,184,0.15)] space-y-4 shadow-md">
+      {/* Header */}
       <div>
-        <div className="text-[11px] font-medium text-terminal-muted uppercase tracking-wider mb-2">
-          Route Corridor Presets
-        </div>
-        <div className="space-y-1">
+        <h2 className="text-base font-bold text-white flex items-center space-x-2">
+          <span>🚦 Plan Your Route</span>
+        </h2>
+        <p className="text-xs text-slate-400 mt-0.5">
+          Find safe corridors avoiding real-time flood zones across Madurai
+        </p>
+      </div>
+
+      {/* Popular Commute Presets */}
+      <div>
+        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
+          Popular Commutes
+        </label>
+        <div className="space-y-1.5">
           {MADURAI_PRESETS.map((preset) => {
             const isSelected =
               selectedOrigin?.place_id === preset.origin.place_id &&
@@ -147,41 +156,41 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
               <button
                 key={preset.id}
                 onClick={() => handleApplyPreset(preset)}
-                className={`w-full text-left px-2.5 py-1.5 text-xs transition-colors flex items-center justify-between border ${
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center justify-between border ${
                   isSelected
-                    ? 'bg-raised border-terminal-border text-white border-l-2 border-l-accent'
-                    : 'bg-surface hover:bg-raised border-terminal-border text-terminal-muted hover:text-white'
+                    ? 'bg-blue-600/15 border-blue-500/50 text-white font-medium'
+                    : 'bg-[#0B0F19] hover:bg-slate-800/60 border-[rgba(148,163,184,0.15)] text-slate-300'
                 }`}
               >
                 <span className="truncate">{preset.name}</span>
-                {isSelected && <Check className="w-3.5 h-3.5 text-accent shrink-0 ml-1" />}
+                {isSelected && <Check className="w-3.5 h-3.5 text-blue-400 shrink-0 ml-1.5" />}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Origin & Destination Inputs */}
+      {/* FROM and TO Fields */}
       <div className="space-y-2 relative">
         {/* Origin */}
-        <div className="p-2.5 bg-surface border border-terminal-border">
-          <div className="flex items-center space-x-1.5 text-[11px] text-terminal-muted mb-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
-            <span>Origin</span>
+        <div className="p-3 bg-[#0B0F19] rounded-lg border border-[rgba(148,163,184,0.15)]">
+          <div className="flex items-center space-x-1.5 text-[11px] font-semibold text-blue-400 mb-1">
+            <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span>STARTING FROM (ORIGIN)</span>
           </div>
           <div className="text-xs font-semibold text-white truncate">
-            {selectedOrigin?.name || 'Select origin on map'}
+            {selectedOrigin?.name || 'Select starting point'}
           </div>
-          <div className="text-[11px] text-terminal-muted truncate mt-0.5">
+          <div className="text-[11px] text-slate-400 truncate mt-0.5">
             {selectedOrigin?.address}
           </div>
         </div>
 
-        {/* Swap Control */}
-        <div className="flex justify-end pr-2 -my-2.5 relative z-10">
+        {/* Swap Button */}
+        <div className="flex justify-center -my-2.5 relative z-10">
           <button
             onClick={handleSwap}
-            className="p-1 bg-raised hover:bg-[#26262c] text-terminal-muted hover:text-white border border-terminal-border rounded-sm transition-colors"
+            className="p-1.5 bg-[#1F2937] hover:bg-slate-700 text-slate-300 hover:text-white border border-[rgba(148,163,184,0.2)] rounded-full transition-colors shadow-md"
             title="Swap Origin and Destination"
           >
             <ArrowUpDown className="w-3.5 h-3.5" />
@@ -189,30 +198,30 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
         </div>
 
         {/* Destination */}
-        <div className="p-2.5 bg-surface border border-terminal-border">
-          <div className="flex items-center space-x-1.5 text-[11px] text-terminal-muted mb-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-hazard-resolved"></span>
-            <span>Destination</span>
+        <div className="p-3 bg-[#0B0F19] rounded-lg border border-[rgba(148,163,184,0.15)]">
+          <div className="flex items-center space-x-1.5 text-[11px] font-semibold text-emerald-400 mb-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>GOING TO (DESTINATION)</span>
           </div>
           <div className="text-xs font-semibold text-white truncate">
-            {selectedDestination?.name || 'Select destination on map'}
+            {selectedDestination?.name || 'Select destination'}
           </div>
-          <div className="text-[11px] text-terminal-muted truncate mt-0.5">
+          <div className="text-[11px] text-slate-400 truncate mt-0.5">
             {selectedDestination?.address}
           </div>
         </div>
       </div>
 
-      {/* Transport Profile Selection */}
+      {/* Mode of Travel */}
       <div>
-        <div className="text-[11px] font-medium text-terminal-muted uppercase tracking-wider mb-1.5">
-          Transport Mode
-        </div>
-        <div className="grid grid-cols-3 gap-1 bg-surface p-1 border border-terminal-border">
+        <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
+          Travel Mode
+        </label>
+        <div className="grid grid-cols-3 gap-1.5 bg-[#0B0F19] p-1 rounded-lg border border-[rgba(148,163,184,0.15)]">
           <button
             onClick={() => setProfile('Car')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 text-xs transition-colors ${
-              profile === 'Car' ? 'bg-raised text-white font-medium' : 'text-terminal-muted hover:text-white'
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+              profile === 'Car' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Car className="w-3.5 h-3.5" />
@@ -220,48 +229,33 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
           </button>
           <button
             onClick={() => setProfile('Walking')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 text-xs transition-colors ${
-              profile === 'Walking' ? 'bg-raised text-white font-medium' : 'text-terminal-muted hover:text-white'
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+              profile === 'Walking' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Footprints className="w-3.5 h-3.5" />
-            <span>Walking</span>
+            <span>Walk</span>
           </button>
           <button
             onClick={() => setProfile('Truck')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 text-xs transition-colors ${
-              profile === 'Truck' ? 'bg-raised text-white font-medium' : 'text-terminal-muted hover:text-white'
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+              profile === 'Truck' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
             <Truck className="w-3.5 h-3.5" />
-            <span>Truck</span>
+            <span>Heavy</span>
           </button>
         </div>
       </div>
 
-      {/* Hazard Avoidance Toggle */}
-      <div className="flex items-center justify-between px-3 py-2 bg-surface border border-terminal-border text-xs">
-        <label htmlFor="avoid-hazards" className="flex items-center space-x-2 text-terminal-muted cursor-pointer">
-          <ShieldCheck className="w-3.5 h-3.5 text-hazard-resolved" />
-          <span>Avoid Verified Hazard Polygons</span>
-        </label>
-        <input
-          id="avoid-hazards"
-          type="checkbox"
-          checked={avoidHazards}
-          onChange={(e) => setAvoidHazards(e.target.checked)}
-          className="cursor-pointer accent-accent w-4 h-4"
-        />
-      </div>
-
-      {/* Action Trigger */}
+      {/* Big Prominent Action Button */}
       <button
         onClick={handleCalculate}
         disabled={isLoading || !selectedOrigin || !selectedDestination}
-        className="w-full py-2 bg-raised hover:bg-[#25252c] disabled:opacity-40 text-white font-medium text-xs border border-terminal-border transition-colors flex items-center justify-center space-x-2"
+        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:cursor-not-allowed"
       >
-        <Navigation className={`w-3.5 h-3.5 text-accent ${isLoading ? 'animate-spin' : ''}`} />
-        <span>{isLoading ? 'Verifying Polygons...' : 'Compare Corridors'}</span>
+        <Navigation className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+        <span>{isLoading ? 'Scanning Safe Routes...' : 'Check My Route'}</span>
       </button>
     </div>
   );

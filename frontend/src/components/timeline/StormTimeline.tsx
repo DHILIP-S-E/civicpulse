@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { IcebergSnapshot } from '../../types';
-import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Database
-} from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Clock, History } from 'lucide-react';
 
 interface StormTimelineProps {
   snapshots: IcebergSnapshot[];
   currentSnapshotIndex: number;
   onSelectSnapshot: (index: number) => void;
   isLoading: boolean;
-  onOpenSnapshotInspector: () => void;
+  onOpenSnapshotInspector?: () => void;
 }
 
 export const StormTimeline: React.FC<StormTimelineProps> = ({
@@ -39,7 +33,12 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
 
   if (snapshots.length === 0) return null;
 
-  const activeSnapshot = snapshots[currentSnapshotIndex] || snapshots[0];
+  const stageLabels = [
+    { title: 'Yesterday 6AM', subtitle: '3 active hazards · Light rain' },
+    { title: 'Yesterday Noon', subtitle: '7 active hazards · Heavy storm' },
+    { title: 'Yesterday 6PM', subtitle: '9 active hazards · Peak flooding' },
+    { title: 'Now', subtitle: '6 resolved · Dewatering active' },
+  ];
 
   const handlePrev = () => {
     if (currentSnapshotIndex > 0) {
@@ -54,101 +53,101 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
   };
 
   return (
-    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[720px] px-3 select-none">
-      <div className="bg-surface border border-terminal-border p-3 text-xs">
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[760px] px-3 select-none">
+      <div className="bg-[#111827]/95 backdrop-blur-md rounded-xl border border-[rgba(148,163,184,0.2)] p-3.5 shadow-2xl text-xs space-y-3">
         {/* Header Row */}
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-terminal-border text-xs">
+        <div className="flex items-center justify-between pb-2 border-b border-[rgba(148,163,184,0.15)]">
           <div className="flex items-center space-x-2">
-            <span className="flex items-center space-x-1.5 text-white font-medium">
-              <Database className="w-3.5 h-3.5 text-accent" />
-              <span>Iceberg Time-Travel Scrubber</span>
+            <span className="flex items-center space-x-1.5 text-white font-bold">
+              <History className="w-4 h-4 text-blue-400" />
+              <span>24-Hour Storm History</span>
             </span>
-            <span className="text-terminal-subtle">·</span>
-            <span className="text-terminal-muted truncate max-w-[280px]">
-              {activeSnapshot.stage_name}
+            <span className="text-slate-500">·</span>
+            <span className="text-slate-300 font-medium">
+              See how the flood developed and cleared across Madurai
             </span>
           </div>
 
-          <div className="flex items-center space-x-3 text-[11px] font-mono tabular-nums">
-            <span className="text-hazard-critical">
-              {activeSnapshot.active_hazard_count} Active
-            </span>
-            <span className="text-hazard-resolved">
-              {activeSnapshot.resolved_hazard_count} Resolved
-            </span>
+          {onOpenSnapshotInspector && (
             <button
               onClick={onOpenSnapshotInspector}
-              className="text-accent hover:underline"
-              title="Inspect Iceberg snapshot commit & metadata"
+              className="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors"
             >
-              Inspect Snapshot
+              Timeline Details
             </button>
-          </div>
+          )}
         </div>
 
-        {/* 4 Discrete Commit Stages */}
-        <div className="grid grid-cols-4 gap-1.5 mb-2.5">
+        {/* 4 Citizen Timeline Stages */}
+        <div className="grid grid-cols-4 gap-2">
           {snapshots.map((s, idx) => {
             const isCurrent = idx === currentSnapshotIndex;
+            const label = stageLabels[idx] || {
+              title: s.stage_name,
+              subtitle: `${s.active_hazard_count} active · ${s.resolved_hazard_count} resolved`
+            };
+
             return (
               <button
                 key={s.snapshot_id}
                 onClick={() => onSelectSnapshot(idx)}
-                className={`p-2 text-left transition-colors border ${
+                className={`p-2.5 rounded-lg text-left transition-all border ${
                   isCurrent
-                    ? 'bg-raised border-terminal-border text-white border-b-2 border-b-accent'
-                    : 'bg-surface hover:bg-raised border-terminal-border text-terminal-muted hover:text-white'
+                    ? 'bg-blue-600/20 border-blue-500 text-white shadow-md'
+                    : 'bg-[#0B0F19] hover:bg-slate-800/60 border-[rgba(148,163,184,0.15)] text-slate-300'
                 }`}
               >
-                <div className="text-[10px] font-mono text-accent">
-                  {s.relative_time}
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`text-xs font-bold ${isCurrent ? 'text-blue-400' : 'text-slate-200'}`}>
+                    {label.title}
+                  </span>
+                  {isCurrent && (
+                    <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                  )}
                 </div>
-                <div className="text-xs font-medium truncate mt-0.5">
-                  {s.stage_name.split(':')[1]?.trim() || s.stage_name}
-                </div>
-                <div className="text-[10px] text-terminal-subtle font-mono tabular-nums">
-                  {s.committed_at.slice(11, 16)} UTC
+                <div className="text-[11px] text-slate-400 leading-tight">
+                  {label.subtitle}
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Player Controls */}
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center space-x-1.5">
+        {/* Playback Controls & Status */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center space-x-2">
             <button
               onClick={handlePrev}
               disabled={currentSnapshotIndex === 0}
-              className="px-2 py-1 bg-surface hover:bg-raised disabled:opacity-30 border border-terminal-border text-terminal-muted hover:text-white transition-colors"
-              title="Previous Snapshot"
+              className="p-1.5 rounded-md bg-[#0B0F19] hover:bg-slate-800 disabled:opacity-30 border border-[rgba(148,163,184,0.15)] text-slate-300 hover:text-white transition-colors"
+              title="Previous Step"
             >
               <SkipBack className="w-3.5 h-3.5" />
             </button>
 
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-3 py-1 bg-raised hover:bg-[#25252c] text-white font-medium border border-terminal-border flex items-center space-x-1.5 transition-colors"
+              className="px-3.5 py-1.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow transition-all flex items-center space-x-1.5"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              <span>{isPlaying ? 'Pause' : 'Replay Storm Sequence'}</span>
+              <span>{isPlaying ? 'Pause' : 'Replay Storm Development'}</span>
             </button>
 
             <button
               onClick={handleNext}
               disabled={currentSnapshotIndex === snapshots.length - 1}
-              className="px-2 py-1 bg-surface hover:bg-raised disabled:opacity-30 border border-terminal-border text-terminal-muted hover:text-white transition-colors"
-              title="Next Snapshot"
+              className="p-1.5 rounded-md bg-[#0B0F19] hover:bg-slate-800 disabled:opacity-30 border border-[rgba(148,163,184,0.15)] text-slate-300 hover:text-white transition-colors"
+              title="Next Step"
             >
               <SkipForward className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="font-mono text-[11px] text-terminal-muted tabular-nums">
+          <div className="text-xs text-slate-400 font-medium">
             {isLoading ? (
-              <span className="text-accent animate-pulse">Running Athena Iceberg query...</span>
+              <span className="text-blue-400 animate-pulse">Loading historic flood map...</span>
             ) : (
-              <span>Lakehouse Commit Synced</span>
+              <span>Stage {currentSnapshotIndex + 1} of {snapshots.length} selected</span>
             )}
           </div>
         </div>
