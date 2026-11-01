@@ -3,7 +3,8 @@ import {
   Menu,
   Radio,
   MapPin,
-  Database
+  Database,
+  Play
 } from 'lucide-react';
 import { useAppStore, WorkspaceId } from '../../store/useAppStore';
 
@@ -42,7 +43,8 @@ export const TopHeader: React.FC = () => {
   const {
     activeWorkspace,
     sidebarCollapsed,
-    toggleSidebar
+    toggleSidebar,
+    setIsVideoModalOpen
   } = useAppStore();
 
   const currentInfo = WORKSPACE_TITLES[activeWorkspace] || WORKSPACE_TITLES.command;
@@ -104,6 +106,16 @@ export const TopHeader: React.FC = () => {
           <Database className="w-3.5 h-3.5 text-[#16A34A]" />
           <span className="text-[#166534] font-semibold text-[11px]">Audit Ledger Synced</span>
         </div>
+
+        {/* Watch Story Video Button */}
+        <button
+          onClick={() => setIsVideoModalOpen(true)}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-[#1677FF] hover:bg-[#0958D9] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer hover:shadow-sm"
+          title="Watch 2-minute narrated video walkthrough"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span className="hidden sm:inline">Watch Demo (2m)</span>
+        </button>
 
         {/* Operational Telemetry Pulse */}
         <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#EAF3FF] border border-[#1677FF]/20 text-[#1677FF] text-xs font-semibold">

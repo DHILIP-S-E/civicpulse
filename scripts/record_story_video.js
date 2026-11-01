@@ -79,7 +79,7 @@ async function run() {
       if (typeof locatorOrX === 'object') {
         const el = locatorOrX;
         if (await el.count() > 0) {
-          await el.scrollIntoViewIfNeeded().catch(() => {});
+          await el.scrollIntoViewIfNeeded().catch(() => { });
           const box = await el.boundingBox();
           if (box) {
             const targetX = box.x + box.width / 2;

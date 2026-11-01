@@ -8,7 +8,9 @@ import {
   Layers,
   Box,
   Compass,
-  ArrowRight
+  ArrowRight,
+  Play,
+  Film
 } from 'lucide-react';
 
 export const CommandCenterWorkspace: React.FC = () => {
@@ -17,7 +19,8 @@ export const CommandCenterWorkspace: React.FC = () => {
     filters,
     toggleFilter,
     setSelectedHazard,
-    setActiveWorkspace
+    setActiveWorkspace,
+    setIsVideoModalOpen
   } = useAppStore();
 
   const totalCount = hazards.length;
@@ -27,6 +30,31 @@ export const CommandCenterWorkspace: React.FC = () => {
 
   return (
     <div className="space-y-4">
+      {/* Dedicated Video Walkthrough Banner Row */}
+      <div
+        onClick={() => setIsVideoModalOpen(true)}
+        className="p-3 bg-gradient-to-r from-[#EAF3FF] to-[#F0FDF4] rounded-xl border border-[#1677FF]/25 flex items-center justify-between cursor-pointer hover:border-[#1677FF]/60 hover:shadow-xs transition-all group select-none"
+      >
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#1677FF] text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+            <Play className="w-4 h-4 fill-white ml-0.5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-[#172033] flex items-center space-x-1.5">
+              <span>Watch Story Walkthrough</span>
+              <span className="text-[10px] font-semibold text-[#1677FF]">(2m 11s)</span>
+            </div>
+            <div className="text-[10px] text-[#64748B]">
+              Madurai monsoon crisis & AWS Spatial Lakehouse
+            </div>
+          </div>
+        </div>
+
+        <span className="text-[11px] font-bold px-2 py-1 rounded-md bg-white text-[#1677FF] border border-[#1677FF]/20 shadow-2xs group-hover:bg-[#1677FF] group-hover:text-white transition-colors">
+          Play
+        </span>
+      </div>
+
       {/* KPI Strip */}
       <div className="grid grid-cols-2 gap-2.5">
         <div className="p-3 bg-white rounded-xl border border-[#E2E8F0] shadow-xs">

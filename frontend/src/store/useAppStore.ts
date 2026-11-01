@@ -102,6 +102,10 @@ interface AppStoreState {
   toasts: ToastMessage[];
   showToast: (message: string, type?: 'success' | 'warning' | 'info' | 'error') => void;
   removeToast: (id: string) => void;
+
+  // Video Modal
+  isVideoModalOpen: boolean;
+  setIsVideoModalOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppStoreState>((set, get) => ({
@@ -213,6 +217,10 @@ export const useAppStore = create<AppStoreState>((set, get) => ({
     }, 4500);
   },
   removeToast: (id) =>
-    set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }))
+    set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
+
+  // Video Modal
+  isVideoModalOpen: false,
+  setIsVideoModalOpen: (isVideoModalOpen) => set({ isVideoModalOpen })
 }));
 

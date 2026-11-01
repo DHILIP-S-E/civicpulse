@@ -8,6 +8,7 @@ import { MapLegend } from '../map/MapLegend';
 import { ContextualPanel } from '../panels/ContextualPanel';
 import { HazardInspectorPanel } from '../panels/HazardInspectorPanel';
 import { GeofenceSimulatorModal } from '../municipal/GeofenceSimulatorModal';
+import { VideoModal } from './VideoModal';
 
 // Workspaces
 import { CommandCenterWorkspace } from '../workspaces/CommandCenterWorkspace';
@@ -147,6 +148,9 @@ export const AppShell: React.FC = () => {
         hazard={selectedHazard}
         onRunSimulation={handleRunGeofenceSimulation}
       />
+
+      {/* Dedicated Story Video Modal */}
+      <VideoModal />
     </div>
   );
 };
