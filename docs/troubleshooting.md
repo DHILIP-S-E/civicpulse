@@ -51,3 +51,4 @@
 - **Solution:**
   - Change backend port: `python -m uvicorn app.main:app --port 8001`
   - Change frontend port: update `server.port` in `frontend/vite.config.ts` or run `npm run dev -- --port 5174`
+

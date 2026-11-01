@@ -156,3 +156,4 @@ export const GeofenceSimulatorModal: React.FC<GeofenceSimulatorModalProps> = ({
     </div>
   );
 };
+

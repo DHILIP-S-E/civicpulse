@@ -113,3 +113,4 @@ class LocationService:
 
 
 location_service = LocationService()
+

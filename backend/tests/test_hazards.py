@@ -61,3 +61,4 @@ def test_hazard_summary():
     summary = hazard_service.get_summary()
     assert summary.total_hazards > 0
     assert summary.total_hazards == (summary.active_hazards + summary.investigating_hazards + summary.resolved_hazards)
+

@@ -52,3 +52,4 @@ class RouteCompareResponse(BaseModel):
     data_freshness: str
     status: str
     overall_warnings: List[str] = []
+

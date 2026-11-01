@@ -104,3 +104,4 @@ When municipal commanders resolve a hazard on the ground:
    ```
 4. Athena commits the mutation, writing a new data file and snapshot metadata.
 5. The map layer refreshes, showing the resolved polygon in emerald green, and re-computes safe corridors without the resolved hazard.
+

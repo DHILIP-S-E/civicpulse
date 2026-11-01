@@ -18,3 +18,4 @@ def compare_routes(request: RouteCompareRequest):
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to calculate route comparison: {str(e)}")
+

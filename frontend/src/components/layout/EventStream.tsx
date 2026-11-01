@@ -68,3 +68,4 @@ export const EventStream: React.FC<EventStreamProps> = ({ events }) => {
     </div>
   );
 };
+

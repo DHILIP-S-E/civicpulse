@@ -31,3 +31,4 @@ def sync_geofences():
         return geofence_service.sync_geofences()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Geofence sync failed: {str(e)}")
+

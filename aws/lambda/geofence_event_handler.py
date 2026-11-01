@@ -43,3 +43,4 @@ def handler(event, context):
             "geofence_id": geofence_id
         })
     }
+

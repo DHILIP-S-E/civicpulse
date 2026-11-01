@@ -46,3 +46,4 @@ The execution role for CivicPulse adheres to the principle of least privilege:
 - `athena:*` access is strictly scoped to the `civicpulse_db` database and `civicpulse-workgroup`.
 - `s3:*` write permissions are restricted exclusively to the `civicpulse/` prefix inside the allocated Lakehouse bucket.
 - `geo:*` permissions are constrained to the named Map, Place Index, Route Calculator, and Geofence Collection resources.
+

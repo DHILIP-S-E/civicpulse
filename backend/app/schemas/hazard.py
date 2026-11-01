@@ -89,3 +89,4 @@ class HazardSummary(BaseModel):
     max_water_depth_cm: float
     data_source: str
     last_updated: str
+

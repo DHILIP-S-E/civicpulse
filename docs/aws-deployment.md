@@ -103,3 +103,4 @@ aws cloudformation delete-stack \
   --stack-name civicpulse-lakehouse-stack \
   --region ap-south-1
 ```
+

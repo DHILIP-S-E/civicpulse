@@ -84,3 +84,4 @@ class HazardService:
 
 
 hazard_service = HazardService()
+

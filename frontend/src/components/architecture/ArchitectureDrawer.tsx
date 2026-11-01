@@ -130,3 +130,4 @@ export const ArchitectureDrawer: React.FC<ArchitectureDrawerProps> = ({ isOpen, 
     </div>
   );
 };
+

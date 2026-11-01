@@ -19,3 +19,4 @@ def test_prioritization_calculation():
     # Check contributing factor sum
     weight_sum = sum(f.weight for f in top_hazard.contributing_factors)
     assert abs(weight_sum - 1.0) < 0.001
+

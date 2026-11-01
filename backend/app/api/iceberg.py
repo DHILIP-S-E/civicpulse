@@ -75,3 +75,4 @@ def resolve_hazard(request: ResolveHazardRequest):
         raise HTTPException(status_code=404, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to execute hazard resolution: {str(e)}")
+

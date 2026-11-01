@@ -25,3 +25,4 @@ def get_place(place_id: str):
     if not place:
         raise HTTPException(status_code=404, detail=f"Place {place_id} not found.")
     return place
+

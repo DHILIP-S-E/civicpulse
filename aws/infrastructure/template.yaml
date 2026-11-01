@@ -1,9 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
 Description: >
   CivicPulse — Madurai Spatial Lakehouse
-  Complete AWS CloudFormation/SAM Infrastructure Specification:
-  Amazon S3, Apache Iceberg, AWS Glue, Amazon Athena, Amazon Location Service, EventBridge, Lambda.
+  Complete Native AWS CloudFormation Infrastructure:
+  Amazon S3, AWS Glue, Amazon Athena, Amazon Location Service (Maps, Places, Routes, Geofences), Lambda & EventBridge.
 
 Parameters:
   Environment:
@@ -12,17 +11,17 @@ Parameters:
     AllowedValues: [development, staging, production]
     Description: Deployment target stage.
 
-  LakehouseBucketName:
+  LakehouseBucketPrefix:
     Type: String
-    Default: civicpulse-madurai-lakehouse
-    Description: S3 bucket name for Apache Iceberg warehouse, raw telemetry, and Athena results.
+    Default: civicpulse-lakehouse
+    Description: S3 bucket prefix for Apache Iceberg warehouse, raw telemetry, and Athena results.
 
 Resources:
   # 1. Primary S3 Lakehouse Bucket
   SpatialLakehouseBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${LakehouseBucketName}-${AWS::AccountId}-${AWS::Region}"
+      BucketName: !Sub "${LakehouseBucketPrefix}-${AWS::AccountId}-${AWS::Region}"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -94,38 +93,110 @@ Resources:
       CollectionName: CivicPulseMaduraiGeofences
       Description: "Geofence collection representing active Madurai flood and hazard zones"
 
-  # 8. Lambda Geofence Event Handler
+  # 8. Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "CivicPulse-LambdaExecutionRole-${AWS::Region}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: CivicPulseLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "arn:aws:s3:::${SpatialLakehouseBucket}"
+                  - !Sub "arn:aws:s3:::${SpatialLakehouseBucket}/*"
+              - Effect: Allow
+                Action:
+                  - athena:StartQueryExecution
+                  - athena:GetQueryExecution
+                  - athena:GetQueryResults
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - glue:GetDatabase
+                  - glue:GetTable
+                  - glue:GetPartitions
+                Resource: "*"
+
+  # 9. Lambda Function for Geofence Event Handling (Inline)
   GeofenceEventHandlerFunction:
-    Type: AWS::Serverless::Function
+    Type: AWS::Lambda::Function
     Properties:
       FunctionName: CivicPulse-GeofenceEventHandler
       Runtime: python3.11
-      Handler: geofence_event_handler.handler
-      CodeUri: ../lambda/
-      MemorySize: 256
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 15
+      MemorySize: 256
       Environment:
         Variables:
           ATHENA_DATABASE: civicpulse_db
           ATHENA_RESULTS_S3_URI: !Sub "s3://${SpatialLakehouseBucket}/civicpulse/query-results/"
-      Policies:
-        - AthenaQueryPolicy:
-            WorkGroupName: !Ref CivicPulseAthenaWorkgroup
-        - S3CrudPolicy:
-            BucketName: !Sub "${LakehouseBucketName}-${AWS::AccountId}-${AWS::Region}"
-      Events:
-        GeofenceEventRule:
-          Type: EventBridgeRule
-          Properties:
-            Pattern:
-              source:
-                - aws.geo
-              detail-type:
-                - Location Geofence Event
-              detail:
-                EventType:
-                  - ENTER
-                  - EXIT
+      Code:
+        ZipFile: |
+          import json
+          import logging
+          import os
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def handler(event, context):
+              logger.info("Received Geofence Event from EventBridge: %s", json.dumps(event))
+              detail = event.get("detail", {})
+              event_type = detail.get("EventType")
+              geofence_id = detail.get("GeofenceId")
+              device_id = detail.get("DeviceId")
+              sample_time = detail.get("SampleTime")
+              position = detail.get("Position", [])
+              logger.info("Device %s -> %s on %s at %s", device_id, event_type, geofence_id, sample_time)
+              return {
+                  "statusCode": 200,
+                  "body": json.dumps({"event_type": event_type, "geofence_id": geofence_id})
+              }
+
+  # 10. EventBridge Rule for Geofence Events
+  GeofenceEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: CivicPulse-GeofenceBreachRule
+      Description: "Routes Amazon Location Geofence breach events to Lambda handler"
+      EventPattern:
+        source:
+          - aws.geo
+        detail-type:
+          - Location Geofence Event
+        detail:
+          EventType:
+            - ENTER
+            - EXIT
+      Targets:
+        - Arn: !GetAtt GeofenceEventHandlerFunction.Arn
+          Id: TargetGeofenceLambda
+
+  # Permission for EventBridge to invoke Lambda
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref GeofenceEventHandlerFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt GeofenceEventRule.Arn
 
 Outputs:
   LakehouseBucket:
@@ -143,6 +214,14 @@ Outputs:
   LocationMapName:
     Description: Amazon Location Map Name
     Value: !Ref CivicPulseLocationMap
+
+  LocationPlaceIndex:
+    Description: Amazon Location Place Index Name
+    Value: !Ref CivicPulsePlaceIndex
+
+  LocationRouteCalculator:
+    Description: Amazon Location Route Calculator Name
+    Value: !Ref CivicPulseRouteCalculator
 
   LocationGeofenceCollection:
     Description: Amazon Location Geofence Collection Name

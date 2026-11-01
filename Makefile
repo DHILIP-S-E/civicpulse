@@ -25,3 +25,4 @@ validate:
 
 verify-aws:
 	python scripts/verify_aws_resources.py
+

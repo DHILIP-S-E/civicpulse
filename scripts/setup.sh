@@ -33,3 +33,4 @@ python3 scripts/validate_environment.py
 echo "=========================================================="
 echo "Setup complete! Ready for local development and deployment."
 echo "=========================================================="
+

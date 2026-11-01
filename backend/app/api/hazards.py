@@ -33,3 +33,4 @@ def get_hazard(hazard_id: str):
     if not hazard:
         raise HTTPException(status_code=404, detail=f"Hazard {hazard_id} not found in Lakehouse.")
     return hazard
+

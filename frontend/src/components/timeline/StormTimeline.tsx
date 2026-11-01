@@ -168,3 +168,4 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
     </div>
   );
 };
+

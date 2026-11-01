@@ -57,3 +57,4 @@ class DispatchRecord(BaseModel):
     estimated_arrival_minutes: int
     vehicle_path: List[List[float]] = Field(default=[], description="Interpolated route points for vehicle animation")
     action_log: List[Dict[str, Any]]
+

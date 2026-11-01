@@ -37,3 +37,4 @@ def test_haversine_distance():
     dist = routing_service.haversine_distance_km(p1, p2)
     # Approx 6-8 km direct line distance
     assert 5.0 <= dist <= 10.0
+

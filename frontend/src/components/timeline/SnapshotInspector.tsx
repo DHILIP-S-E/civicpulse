@@ -107,3 +107,4 @@ export const SnapshotInspector: React.FC<SnapshotInspectorProps> = ({
     </div>
   );
 };
+

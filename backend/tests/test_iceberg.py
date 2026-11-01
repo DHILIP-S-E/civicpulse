@@ -46,3 +46,4 @@ def test_iceberg_time_travel_query_execution():
     assert res.snapshot_id == "snap-20261031-060000-001"
     assert res.active_count > 0
     assert len(res.hazards) > 0
+

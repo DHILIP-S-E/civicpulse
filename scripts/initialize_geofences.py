@@ -68,3 +68,4 @@ def initialize_geofences():
 
 if __name__ == "__main__":
     initialize_geofences()
+

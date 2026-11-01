@@ -25,3 +25,4 @@ class OperationalEvent(BaseModel):
     related_id: Optional[str] = None  # Hazard ID or Route ID or Dispatch ID
     message: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
+

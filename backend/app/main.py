@@ -83,3 +83,4 @@ def root():
         "mode": settings.APP_MODE,
         "region": settings.AWS_REGION
     }
+

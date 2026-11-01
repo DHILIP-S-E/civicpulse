@@ -28,3 +28,4 @@ def test_geofence_evaluation_inside_sellur():
     assert res.submission_status == "ACCEPTED"
     assert len(res.breaches_detected) > 0
     assert any("Sellur" in b.location_name or "HAZ-MDU-001" == b.hazard_id for b in res.breaches_detected)
+

@@ -48,3 +48,4 @@ export const MapLegend: React.FC = () => {
     </div>
   );
 };
+

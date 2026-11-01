@@ -43,3 +43,4 @@ class GeofenceSyncResponse(BaseModel):
     active_geofences: List[str]
     status: str
     message: str
+

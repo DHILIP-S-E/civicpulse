@@ -60,3 +60,4 @@ class ResolveHazardResponse(BaseModel):
     execution_time_ms: int
     commit_type: str
     message: str
+

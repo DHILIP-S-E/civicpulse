@@ -1,0 +1,262 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "snapshot_id": "snap-20261031-180000-003",
+    "stage_name": "Stage 3 \u2014 T\u22126h: Peak Simulated Storm",
+    "committed_at": "2026-10-31T18:00:00Z"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-001",
+        "location_name": "Sellur Railway Underpass / Kanpalayam",
+        "hazard_type": "FLOOD",
+        "severity": "CRITICAL",
+        "status": "ACTIVE",
+        "water_depth_cm": 95.0,
+        "observed_at": "2026-10-31T17:45:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "IOT_SENSOR",
+        "confidence": 0.99
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.1225,
+              9.9365
+            ],
+            [
+              78.1325,
+              9.9365
+            ],
+            [
+              78.1325,
+              9.9455
+            ],
+            [
+              78.1225,
+              9.9455
+            ],
+            [
+              78.1225,
+              9.9365
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-002",
+        "location_name": "Simmakkal North Veli Street Junction",
+        "hazard_type": "FLOOD",
+        "severity": "CRITICAL",
+        "status": "ACTIVE",
+        "water_depth_cm": 70.0,
+        "observed_at": "2026-10-31T17:50:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "CITIZEN_REPORT",
+        "confidence": 0.91
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.1185,
+              9.9248
+            ],
+            [
+              78.1265,
+              9.9248
+            ],
+            [
+              78.1265,
+              9.9318
+            ],
+            [
+              78.1185,
+              9.9318
+            ],
+            [
+              78.1185,
+              9.9248
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-003",
+        "location_name": "Goripalayam Thevar Statue Intersection",
+        "hazard_type": "FLOOD",
+        "severity": "MODERATE",
+        "status": "ACTIVE",
+        "water_depth_cm": 48.0,
+        "observed_at": "2026-10-31T17:35:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "MUNICIPAL_WARD_OFFICER",
+        "confidence": 0.94
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.1295,
+              9.93
+            ],
+            [
+              78.1365,
+              9.93
+            ],
+            [
+              78.1365,
+              9.936
+            ],
+            [
+              78.1295,
+              9.936
+            ],
+            [
+              78.1295,
+              9.93
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-004",
+        "location_name": "Arapalayam Bus Stand Outer Ring",
+        "hazard_type": "FLOOD",
+        "severity": "MODERATE",
+        "status": "ACTIVE",
+        "water_depth_cm": 38.0,
+        "observed_at": "2026-10-31T17:40:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "CITIZEN_REPORT",
+        "confidence": 0.86
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.1035,
+              9.9315
+            ],
+            [
+              78.1105,
+              9.9315
+            ],
+            [
+              78.1105,
+              9.9375
+            ],
+            [
+              78.1035,
+              9.9375
+            ],
+            [
+              78.1035,
+              9.9315
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-005",
+        "location_name": "Periyar Bus Stand West Gate",
+        "hazard_type": "FLOOD",
+        "severity": "CRITICAL",
+        "status": "ACTIVE",
+        "water_depth_cm": 60.0,
+        "observed_at": "2026-10-31T17:55:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "IOT_SENSOR",
+        "confidence": 0.97
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.1105,
+              9.9155
+            ],
+            [
+              78.1165,
+              9.9155
+            ],
+            [
+              78.1165,
+              9.9195
+            ],
+            [
+              78.1105,
+              9.9195
+            ],
+            [
+              78.1105,
+              9.9155
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "hazard_id": "HAZ-MDU-006",
+        "location_name": "Kalavasal Junction Bypass",
+        "hazard_type": "ROAD_DAMAGE",
+        "severity": "MODERATE",
+        "status": "ACTIVE",
+        "water_depth_cm": 20.0,
+        "observed_at": "2026-10-31T17:15:00Z",
+        "updated_at": "2026-10-31T18:00:00Z",
+        "source_type": "MUNICIPAL_WARD_OFFICER",
+        "confidence": 0.89
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              78.0905,
+              9.9245
+            ],
+            [
+              78.0965,
+              9.9245
+            ],
+            [
+              78.0965,
+              9.9285
+            ],
+            [
+              78.0905,
+              9.9285
+            ],
+            [
+              78.0905,
+              9.9245
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

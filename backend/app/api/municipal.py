@@ -86,3 +86,4 @@ def get_dispatch(dispatch_id: str):
     if dispatch_id not in dispatches_store:
         raise HTTPException(status_code=404, detail=f"Dispatch {dispatch_id} not found.")
     return dispatches_store[dispatch_id]
+

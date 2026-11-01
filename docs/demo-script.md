@@ -56,3 +56,4 @@
 ### Phase 7: Closing & Impact (2:35 – 2:40)
 * **Spoken Narrative:**
   > "CivicPulse proves that geographic data is most valuable when it closes the loop between observation, routing, and municipal action. Built on Amazon S3, Athena, and Amazon Location Service."
+

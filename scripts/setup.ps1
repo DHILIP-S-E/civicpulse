@@ -52,3 +52,4 @@ Write-Host "To start the application:" -ForegroundColor White
 Write-Host "  Backend:  cd backend; python -m uvicorn app.main:app --reload --port 8000" -ForegroundColor Cyan
 Write-Host "  Frontend: cd frontend; npm run dev" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Green
+

@@ -47,3 +47,4 @@ To adapt CivicPulse for another municipality (e.g. Chennai, Bengaluru, Mumbai, o
 2. Update the default bounding box and map center in `frontend/src/components/map/OperationsMap.tsx` and `backend/app/core/config.py`.
 3. Re-run `python scripts/seed_demo_data.py`.
 4. Deploy the infrastructure template (`aws/infrastructure/template.yaml`) in the chosen AWS region.
+

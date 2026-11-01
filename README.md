@@ -225,3 +225,4 @@ CivicPulse connects multi-source hazard observations with an Apache Iceberg lake
 ## 10. License
 
 MIT License. Open-source software developed for civic resilience and geospatial innovation.
+

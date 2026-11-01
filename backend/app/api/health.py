@@ -79,3 +79,4 @@ def aws_health_check():
         },
         "disclaimer": "Live AWS badges reflect real verified API handshakes."
     }
+

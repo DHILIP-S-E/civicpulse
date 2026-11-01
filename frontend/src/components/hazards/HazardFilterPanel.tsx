@@ -89,3 +89,4 @@ export const HazardFilterPanel: React.FC<HazardFilterPanelProps> = ({ filters, s
     </div>
   );
 };
+
