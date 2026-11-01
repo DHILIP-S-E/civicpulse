@@ -1,11 +1,10 @@
 import React from 'react';
 import { AppMode } from '../../types';
-import { Compass, Shield, Radio, Info } from 'lucide-react';
+import { Compass, Shield, Radio } from 'lucide-react';
 
 interface TopHeaderProps {
   appMode: AppMode;
   setAppMode: (mode: AppMode) => void;
-  onOpenArchitecture?: () => void;
   isBackendHealthy: boolean;
   activeSnapshotStage?: string;
 }
@@ -13,7 +12,6 @@ interface TopHeaderProps {
 export const TopHeader: React.FC<TopHeaderProps> = ({
   appMode,
   setAppMode,
-  onOpenArchitecture,
   isBackendHealthy,
 }) => {
   return (
@@ -64,28 +62,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         </button>
       </nav>
 
-      {/* Live Status & Information */}
+      {/* Live Status */}
       <div className="flex items-center space-x-3">
-        {/* Status Pill */}
         <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
           <span className="relative flex h-2 w-2">
             <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isBackendHealthy ? 'bg-emerald-400' : 'bg-amber-400'} opacity-75`}></span>
             <span className={`relative inline-flex rounded-full h-2 w-2 ${isBackendHealthy ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
           </span>
-          <span className="hidden md:inline">Live Data - Madurai - Synced</span>
-          <span className="md:hidden">Madurai Live</span>
+          <span className="hidden md:inline">Live - Madurai Water Monitoring</span>
+          <span className="md:hidden">Live</span>
         </div>
-
-        {/* System Info Link */}
-        {onOpenArchitecture && (
-          <button
-            onClick={onOpenArchitecture}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-md border border-[rgba(148,163,184,0.15)] transition-colors cursor-pointer"
-            title="System & Data Architecture"
-          >
-            <Info className="w-4 h-4" />
-          </button>
-        )}
       </div>
     </header>
   );

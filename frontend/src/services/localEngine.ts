@@ -33,7 +33,7 @@ const mappedSnapshots: IcebergSnapshot[] = rawSnapshots.map((s: any, idx: number
     active_hazard_count: activeCount,
     resolved_hazard_count: resolvedCount,
     total_records: s.hazards.length,
-    provenance: 'Apache Iceberg v2 Lakehouse (ap-south-1)'
+    provenance: 'Madurai Flood Telemetry Network'
   };
 });
 
@@ -45,7 +45,7 @@ let localEvents: OperationalEvent[] = [
     event_type: 'HAZARD_LAYER_REFRESHED',
     timestamp: new Date().toISOString(),
     status: 'SUCCESS',
-    message: 'Madurai spatial lakehouse initial snapshot synchronized.'
+    message: 'Madurai city flood maps synchronized.'
   },
   {
     event_id: 'EV-002',
@@ -60,7 +60,7 @@ export const localEngine = {
   getHealth: () => ({
     status: 'healthy',
     mode: 'live',
-    engine: 'Madurai Spatial Lakehouse Engine'
+    engine: 'Madurai Municipal Flood Intelligence Engine'
   }),
 
   getAwsHealth: () => ({
@@ -267,8 +267,8 @@ export const localEngine = {
       data_freshness: 'Committed Snapshot',
       status: 'COMPARED_SUCCESSFULLY',
       overall_warnings: [
-        'Route verification verified against active Apache Iceberg table state.',
-        'Caution: Monsoonal flood depths may change during active rainfall.'
+        'Route verified against live water level records across Madurai.',
+        'Caution: Road conditions may change during heavy rain.'
       ]
     };
   },

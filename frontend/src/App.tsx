@@ -26,7 +26,6 @@ import { SnapshotInspector } from './components/timeline/SnapshotInspector';
 import { PriorityRanking } from './components/municipal/PriorityRanking';
 import { MunicipalDispatchPanel } from './components/municipal/MunicipalDispatchPanel';
 import { GeofenceSimulatorModal } from './components/municipal/GeofenceSimulatorModal';
-import { ArchitectureDrawer } from './components/architecture/ArchitectureDrawer';
 import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
 
 interface ToastNotice {
@@ -75,7 +74,6 @@ export const App: React.FC = () => {
   const [events, setEvents] = useState<OperationalEvent[]>([]);
 
   // Modals & Drawers
-  const [isArchitectureOpen, setIsArchitectureOpen] = useState(false);
   const [isSnapshotInspectorOpen, setIsSnapshotInspectorOpen] = useState(false);
   const [isGeofenceModalOpen, setIsGeofenceModalOpen] = useState(false);
 
@@ -325,7 +323,6 @@ export const App: React.FC = () => {
       <TopHeader
         appMode={appMode}
         setAppMode={setAppMode}
-        onOpenArchitecture={() => setIsArchitectureOpen(true)}
         isBackendHealthy={isBackendHealthy}
         activeSnapshotStage={activeSnapshot?.stage_name}
       />
@@ -452,11 +449,6 @@ export const App: React.FC = () => {
         onClose={() => setIsGeofenceModalOpen(false)}
         hazard={selectedHazard}
         onRunSimulation={handleRunGeofenceSimulation}
-      />
-
-      <ArchitectureDrawer
-        isOpen={isArchitectureOpen}
-        onClose={() => setIsArchitectureOpen(false)}
       />
     </div>
   );

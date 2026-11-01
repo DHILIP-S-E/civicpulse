@@ -71,7 +71,7 @@ export const api = {
         moderate_severity_count: active.filter(h => h.severity === 'MODERATE').length,
         low_severity_count: active.filter(h => h.severity === 'LOW').length,
         max_water_depth_cm: Math.max(...all.map(h => h.water_depth_cm || 0), 0),
-        data_source: 'Apache Iceberg Lakehouse (Madurai)',
+        data_source: 'Madurai Flood Telemetry System',
         last_updated: new Date().toISOString()
       };
     });
