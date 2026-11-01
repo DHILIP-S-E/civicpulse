@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Hazard,
-  HazardSummary,
   Place,
   RouteCompareResponse,
   IcebergSnapshot,
@@ -101,31 +100,40 @@ export const App: React.FC = () => {
 
         const ev = await api.getEvents();
         setEvents(ev);
+
+        // Pre-select first hazard
+        if (hz.length > 0) {
+          setSelectedHazard(hz[0]);
+        }
       } catch (err) {
-        console.warn('Initial backend fetch warning:', err);
+        console.warn('Initial data load warning:', err);
       }
     };
 
     initialize();
-  }, []);
 
-  // 2. Poll Operational Events every 3 seconds
-  useEffect(() => {
-    const interval = setInterval(async () => {
+    // Auto-refresh event log every 8s
+    const eventPoll = setInterval(async () => {
       try {
         const ev = await api.getEvents();
         setEvents(ev);
-      } catch (e) {
-        // quiet
-      }
-    }, 3000);
-    return () => clearInterval(interval);
+      } catch (_) {}
+    }, 8000);
+
+    return () => clearInterval(eventPoll);
   }, []);
 
-  // 3. Handle Route Compare
+  // 2. Clear vehicle animation on unmount
+  useEffect(() => {
+    return () => {
+      if (vehicleAnimInterval.current) clearInterval(vehicleAnimInterval.current);
+    };
+  }, []);
+
+  // 3. Handle Route Calculation
   const handleCalculateRoute = async (
     origin: Place,
-    dest: Place,
+    destination: Place,
     profile: string,
     avoidHazards: boolean
   ) => {
@@ -133,13 +141,12 @@ export const App: React.FC = () => {
     try {
       const res = await api.compareRoutes({
         origin: { longitude: origin.longitude, latitude: origin.latitude },
-        destination: { longitude: dest.longitude, latitude: dest.latitude },
+        destination: { longitude: destination.longitude, latitude: destination.latitude },
         transport_profile: profile,
-        avoid_hazards: avoidHazards,
+        avoid_hazards: avoidHazards
       });
       setRouteComparison(res);
 
-      // Refresh events
       const ev = await api.getEvents();
       setEvents(ev);
     } catch (err: any) {
@@ -161,7 +168,6 @@ export const App: React.FC = () => {
       setHazards(queryRes.hazards);
       setLastExecutedSql(queryRes.query_executed);
 
-      // If route comparison exists, re-evaluate route intersections against the new snapshot
       if (originPlace && destPlace) {
         handleCalculateRoute(originPlace, destPlace, 'Car', true);
       }
@@ -189,7 +195,6 @@ export const App: React.FC = () => {
       setActiveDispatch(record);
       setAppMode('municipal');
 
-      // Animate truck marker along route path
       if (vehicleAnimInterval.current) clearInterval(vehicleAnimInterval.current);
       if (record.vehicle_path && record.vehicle_path.length > 0) {
         let step = 0;
@@ -221,7 +226,6 @@ export const App: React.FC = () => {
         notes: 'Cleared by Madurai Corporation Dewatering Tanker Unit 04'
       });
 
-      // Refresh hazards & priorities
       const hz = await api.getHazards();
       setHazards(hz);
 
@@ -231,7 +235,6 @@ export const App: React.FC = () => {
       const sn = await api.getSnapshots();
       setSnapshots(sn);
 
-      // Re-query route if present
       if (originPlace && destPlace) {
         handleCalculateRoute(originPlace, destPlace, 'Car', true);
       }
@@ -252,7 +255,6 @@ export const App: React.FC = () => {
 
   // 7. Handle Geofence Simulation
   const handleRunGeofenceSimulation = async (hazard: Hazard, isInside: boolean) => {
-    // Pick point inside or outside hazard polygon
     const coords = isInside
       ? [hazard.longitude, hazard.latitude]
       : [hazard.longitude + 0.015, hazard.latitude + 0.015];
@@ -269,7 +271,6 @@ export const App: React.FC = () => {
     return res;
   };
 
-  // Filter visible hazards on the map
   const visibleHazards = hazards.filter(h => {
     if (h.status === 'RESOLVED' && !filters.showResolved) return false;
     if (h.hazard_type === 'FLOOD' && !filters.showFloods) return false;
@@ -281,7 +282,7 @@ export const App: React.FC = () => {
   const activeSnapshot = snapshots[currentSnapshotIndex] || snapshots[0];
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0B0F19]">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-ground">
       {/* Top Header */}
       <TopHeader
         appMode={appMode}
@@ -296,7 +297,7 @@ export const App: React.FC = () => {
       {/* Main Spatial Workspace */}
       <div className="flex-1 relative flex overflow-hidden">
         {/* Left Operational Control Panel (360px) */}
-        <aside className="w-[370px] z-10 h-full glass-panel border-r border-border-subtle flex flex-col p-3.5 space-y-3 overflow-y-auto select-none shadow-xl">
+        <aside className="w-[360px] z-10 h-full bg-surface border-r border-terminal-border flex flex-col p-4 space-y-4 overflow-y-auto select-none">
           {appMode === 'citizen' ? (
             <>
               <OriginDestinationSelector
@@ -364,7 +365,7 @@ export const App: React.FC = () => {
         </main>
 
         {/* Right Inspector & Event Stream Panel (340px) */}
-        <aside className="w-[350px] z-10 h-full glass-panel border-l border-border-subtle flex flex-col p-3.5 space-y-3 overflow-y-auto select-none shadow-xl">
+        <aside className="w-[340px] z-10 h-full bg-surface border-l border-terminal-border flex flex-col p-4 space-y-4 overflow-y-auto select-none">
           {appMode === 'citizen' ? (
             <>
               <div className="flex-1">
@@ -375,7 +376,7 @@ export const App: React.FC = () => {
                 />
               </div>
 
-              <div className="pt-2 border-t border-border-subtle">
+              <div className="pt-2 border-t border-terminal-border">
                 <EventStream events={events} />
               </div>
             </>
@@ -394,7 +395,7 @@ export const App: React.FC = () => {
                 />
               </div>
 
-              <div className="pt-2 border-t border-border-subtle">
+              <div className="pt-2 border-t border-terminal-border">
                 <EventStream events={events} />
               </div>
             </>
@@ -426,4 +427,3 @@ export const App: React.FC = () => {
 };
 
 export default App;
-

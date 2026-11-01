@@ -5,11 +5,7 @@ import {
   Pause,
   SkipBack,
   SkipForward,
-  Clock,
-  Database,
-  Search,
-  CheckCircle2,
-  AlertCircle
+  Database
 } from 'lucide-react';
 
 interface StormTimelineProps {
@@ -29,7 +25,6 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Auto-play interval
   useEffect(() => {
     let interval: any = null;
     if (isPlaying && snapshots.length > 0) {
@@ -59,59 +54,59 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
   };
 
   return (
-    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 w-full max-w-[700px] px-3 select-none">
-      <div className="glass-panel rounded-xl p-3 shadow-2xl border border-border-subtle backdrop-blur-xl">
-        {/* Top Header Row of Timeline */}
-        <div className="flex items-center justify-between pb-2 mb-2 border-b border-border-subtle/70 text-xs">
+    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-full max-w-[720px] px-3 select-none">
+      <div className="bg-surface border border-terminal-border p-3 text-xs">
+        {/* Header Row */}
+        <div className="flex items-center justify-between pb-2 mb-2 border-b border-terminal-border text-xs">
           <div className="flex items-center space-x-2">
-            <span className="flex items-center space-x-1 text-cyan-400 font-mono font-semibold">
-              <Database className="w-3.5 h-3.5" />
-              <span>Athena Iceberg Time Travel</span>
+            <span className="flex items-center space-x-1.5 text-white font-medium">
+              <Database className="w-3.5 h-3.5 text-accent" />
+              <span>Iceberg Time-Travel Scrubber</span>
             </span>
-            <span className="text-gray-500">•</span>
-            <span className="text-gray-300 font-medium">
+            <span className="text-terminal-subtle">·</span>
+            <span className="text-terminal-muted truncate max-w-[280px]">
               {activeSnapshot.stage_name}
             </span>
           </div>
 
-          <div className="flex items-center space-x-3 text-[11px] font-mono">
-            <span className="text-amber-400">
-              Active: {activeSnapshot.active_hazard_count}
+          <div className="flex items-center space-x-3 text-[11px] font-mono tabular-nums">
+            <span className="text-hazard-critical">
+              {activeSnapshot.active_hazard_count} Active
             </span>
-            <span className="text-emerald-400">
-              Resolved: {activeSnapshot.resolved_hazard_count}
+            <span className="text-hazard-resolved">
+              {activeSnapshot.resolved_hazard_count} Resolved
             </span>
             <button
               onClick={onOpenSnapshotInspector}
-              className="text-[10px] text-blue-400 hover:text-blue-300 underline flex items-center space-x-0.5"
-              title="Inspect Iceberg metadata & commit payload"
+              className="text-accent hover:underline"
+              title="Inspect Iceberg snapshot commit & metadata"
             >
-              <span>{activeSnapshot.snapshot_id.slice(0, 16)}...</span>
+              Inspect Snapshot
             </button>
           </div>
         </div>
 
-        {/* 4 Interactive Stage Steps */}
-        <div className="grid grid-cols-4 gap-2 mb-3">
+        {/* 4 Discrete Commit Stages */}
+        <div className="grid grid-cols-4 gap-1.5 mb-2.5">
           {snapshots.map((s, idx) => {
             const isCurrent = idx === currentSnapshotIndex;
             return (
               <button
                 key={s.snapshot_id}
                 onClick={() => onSelectSnapshot(idx)}
-                className={`p-2 rounded-lg text-left transition-all border ${
+                className={`p-2 text-left transition-colors border ${
                   isCurrent
-                    ? 'bg-blue-600/25 border-blue-500/70 text-white shadow-md'
-                    : 'bg-slate-900/60 hover:bg-slate-800/80 border-border-subtle text-gray-400'
+                    ? 'bg-raised border-terminal-border text-white border-b-2 border-b-accent'
+                    : 'bg-surface hover:bg-raised border-terminal-border text-terminal-muted hover:text-white'
                 }`}
               >
-                <div className="text-[10px] font-mono font-semibold uppercase text-blue-300">
+                <div className="text-[10px] font-mono text-accent">
                   {s.relative_time}
                 </div>
-                <div className="text-xs font-semibold truncate text-gray-200">
+                <div className="text-xs font-medium truncate mt-0.5">
                   {s.stage_name.split(':')[1]?.trim() || s.stage_name}
                 </div>
-                <div className="text-[10px] text-gray-400 font-mono truncate">
+                <div className="text-[10px] text-terminal-subtle font-mono tabular-nums">
                   {s.committed_at.slice(11, 16)} UTC
                 </div>
               </button>
@@ -119,13 +114,13 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
           })}
         </div>
 
-        {/* Controls Bar: Play / Pause / Next / Prev */}
-        <div className="flex items-center justify-between pt-1 text-xs">
-          <div className="flex items-center space-x-2">
+        {/* Player Controls */}
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center space-x-1.5">
             <button
               onClick={handlePrev}
               disabled={currentSnapshotIndex === 0}
-              className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-gray-300 transition-colors"
+              className="px-2 py-1 bg-surface hover:bg-raised disabled:opacity-30 border border-terminal-border text-terminal-muted hover:text-white transition-colors"
               title="Previous Snapshot"
             >
               <SkipBack className="w-3.5 h-3.5" />
@@ -133,34 +128,27 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
 
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-medium flex items-center space-x-1.5 transition-colors shadow"
+              className="px-3 py-1 bg-raised hover:bg-[#25252c] text-white font-medium border border-terminal-border flex items-center space-x-1.5 transition-colors"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              <span>{isPlaying ? 'Pause' : 'Replay Storm'}</span>
+              <span>{isPlaying ? 'Pause' : 'Replay Storm Sequence'}</span>
             </button>
 
             <button
               onClick={handleNext}
               disabled={currentSnapshotIndex === snapshots.length - 1}
-              className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-gray-300 transition-colors"
+              className="px-2 py-1 bg-surface hover:bg-raised disabled:opacity-30 border border-terminal-border text-terminal-muted hover:text-white transition-colors"
               title="Next Snapshot"
             >
               <SkipForward className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Loading / Execution status */}
-          <div className="flex items-center space-x-2 text-[11px] font-mono text-gray-400">
+          <div className="font-mono text-[11px] text-terminal-muted tabular-nums">
             {isLoading ? (
-              <span className="flex items-center space-x-1 text-cyan-400 animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
-                <span>Executing Athena SQL...</span>
-              </span>
+              <span className="text-accent animate-pulse">Running Athena Iceberg query...</span>
             ) : (
-              <span className="flex items-center space-x-1 text-emerald-400">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Lakehouse State Committed</span>
-              </span>
+              <span>Lakehouse Commit Synced</span>
             )}
           </div>
         </div>
@@ -168,4 +156,3 @@ export const StormTimeline: React.FC<StormTimelineProps> = ({
     </div>
   );
 };
-

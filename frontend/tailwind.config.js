@@ -7,28 +7,29 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0B0F19',
-        panel: {
-          primary: 'rgba(15, 23, 42, 0.94)',
-          secondary: '#111827',
-        },
-        border: {
-          subtle: 'rgba(148, 163, 184, 0.18)',
+        ground: '#0e0e11',
+        surface: '#131217',
+        raised: '#1a1a1f',
+        rule: '#1b1a1f',
+        terminal: {
+          border: '#222226',
+          control: '#2b2b30',
+          muted: '#8a8c92',
+          subtle: '#52525b',
         },
         hazard: {
-          critical: '#EF4444',
-          moderate: '#F59E0B',
-          resolved: '#10B981',
+          critical: '#e5566f',
+          moderate: '#d9a441',
+          resolved: '#44a282',
         },
-        telemetry: '#06B6D4',
-        accent: '#60A5FA',
+        telemetry: '#4a8ad6',
+        accent: '#4a8ad6',
       },
       fontFamily: {
-        sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        sans: ['"Public Sans"', 'Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
     },
   },
   plugins: [],
 }
-

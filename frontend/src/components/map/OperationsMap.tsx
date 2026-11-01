@@ -498,32 +498,32 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
     <div className="relative w-full h-full">
       <div ref={mapContainer} className="w-full h-full" />
 
-      {/* Floating 3D Geospatial Camera Control Bar */}
-      <div className="absolute top-4 left-4 z-10 glass-panel p-1.5 rounded-lg flex items-center space-x-1.5 text-xs font-mono shadow-xl border border-border-subtle">
+      {/* 3D Geospatial Camera Controls */}
+      <div className="absolute top-4 left-4 z-10 bg-surface border border-terminal-border p-1 flex items-center space-x-1 text-xs select-none">
         <button
           onClick={setCamera3D}
-          className="px-2.5 py-1 rounded bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 font-semibold transition-colors"
-          title="Tilt to 3D Perspective with Volumetric Prisms"
+          className="px-2.5 py-1 bg-raised hover:bg-[#25252c] text-white border border-terminal-border font-medium transition-colors"
+          title="Tilt to 3D perspective with extruded buildings and water volumes"
         >
-          3D Perspective (60°)
+          3D Perspective
         </button>
         <button
           onClick={setCamera2D}
-          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-gray-300 border border-border-subtle transition-colors"
-          title="Flat 2D Plan View"
+          className="px-2.5 py-1 bg-surface hover:bg-raised text-terminal-muted hover:text-white border border-terminal-border transition-colors"
+          title="Top-down 2D plan view"
         >
-          2D Plan (0°)
+          2D Plan
         </button>
         <button
           onClick={toggleCinematicOrbit}
-          className={`px-2.5 py-1 rounded font-semibold border transition-colors ${
+          className={`px-2.5 py-1 font-medium border border-terminal-border transition-colors ${
             isOrbiting
-              ? 'bg-amber-600 text-white border-amber-400 animate-pulse'
-              : 'bg-slate-800 hover:bg-slate-700 text-cyan-300 border-cyan-500/40'
+              ? 'bg-raised text-white border-accent'
+              : 'bg-surface hover:bg-raised text-terminal-muted hover:text-white'
           }`}
-          title="Rotate camera around city in 3D orbit"
+          title="Rotate camera around city"
         >
-          {isOrbiting ? '⏹ Stop Orbit' : '🔄 3D Orbit'}
+          {isOrbiting ? 'Stop Orbit' : 'Orbit 3D'}
         </button>
       </div>
     </div>

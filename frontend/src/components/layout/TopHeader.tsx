@@ -1,17 +1,14 @@
 import React from 'react';
 import { AppMode } from '../../types';
 import {
-  ShieldAlert,
   Layers,
   Database,
   MapPin,
   Clock,
-  Compass,
-  Truck,
-  HelpCircle,
-  Activity,
-  Wifi,
-  WifiOff
+  Navigation,
+  ShieldCheck,
+  Radio,
+  Server
 } from 'lucide-react';
 
 interface TopHeaderProps {
@@ -34,110 +31,109 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onToggleAwsMode,
 }) => {
   return (
-    <header className="h-14 bg-[#0B0F19]/95 border-b border-border-subtle px-4 flex items-center justify-between z-20 select-none backdrop-blur-md">
+    <header className="h-12 bg-surface border-b border-terminal-border px-4 flex items-center justify-between select-none z-30">
       {/* Brand & Lakehouse Identity */}
       <div className="flex items-center space-x-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/40 text-accent">
-          <ShieldAlert className="w-5 h-5 text-blue-400" />
+        {/* Monogram mark */}
+        <div className="w-7 h-7 bg-raised border border-terminal-border flex items-center justify-center rounded-sm text-accent">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 12h4l3 8 4-16 3 8h4" />
+          </svg>
         </div>
-        <div>
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-base tracking-tight text-white">CIVICPULSE</span>
-            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-blue-950/80 text-blue-300 border border-blue-800/40">
-              Madurai Spatial Lakehouse
-            </span>
-          </div>
-          <div className="flex items-center space-x-2 text-[11px] text-gray-400">
-            <span className="flex items-center space-x-1">
-              <Database className="w-3 h-3 text-cyan-400" />
-              <span>Apache Iceberg v2</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center space-x-1">
-              <MapPin className="w-3 h-3 text-amber-400" />
-              <span>Amazon Location Maps</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center space-x-1">
-              {isBackendHealthy ? (
-                <span className="inline-flex items-center text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
-                  FastAPI Online
-                </span>
-              ) : (
-                <span className="inline-flex items-center text-amber-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1"></span>
-                  Local Engine
-                </span>
-              )}
-            </span>
-          </div>
+
+        <div className="flex items-baseline space-x-2">
+          <span className="font-semibold text-sm tracking-wide text-white">CIVICPULSE</span>
+          <span className="text-xs text-terminal-muted hidden sm:inline">
+            Madurai Spatial Lakehouse
+          </span>
+        </div>
+
+        <div className="h-3.5 w-px bg-terminal-border mx-1 hidden lg:block" />
+
+        {/* Lakehouse Scope Sub-items */}
+        <div className="hidden lg:flex items-center space-x-3 text-xs text-terminal-muted tabular-nums">
+          <span className="flex items-center space-x-1">
+            <Database className="w-3 h-3 text-terminal-subtle" />
+            <span>Apache Iceberg v2</span>
+          </span>
+          <span className="text-terminal-subtle">/</span>
+          <span className="flex items-center space-x-1">
+            <MapPin className="w-3 h-3 text-terminal-subtle" />
+            <span>Amazon Location</span>
+          </span>
+          <span className="text-terminal-subtle">/</span>
+          <span className="flex items-center space-x-1">
+            <Server className="w-3 h-3 text-terminal-subtle" />
+            <span>ap-south-1</span>
+          </span>
         </div>
       </div>
 
-      {/* Segmented Mode Switcher */}
-      <div className="bg-[#111827] p-1 rounded-lg border border-border-subtle flex items-center space-x-1">
+      {/* Primary Navigation - Underline Accent Style (Taste skill move) */}
+      <nav className="flex items-center space-x-6 h-full text-xs font-medium">
         <button
           onClick={() => setAppMode('citizen')}
-          className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${
+          className={`h-full flex items-center space-x-1.5 transition-colors relative ${
             appMode === 'citizen'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-gray-400 hover:text-white hover:bg-slate-800/50'
+              ? 'text-white font-semibold'
+              : 'text-terminal-muted hover:text-white'
           }`}
         >
-          <Compass className="w-3.5 h-3.5" />
-          <span>Citizen Safe Corridor</span>
+          <Navigation className="w-3.5 h-3.5" />
+          <span>Route Exposure Engine</span>
+          {appMode === 'citizen' && (
+            <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
+          )}
         </button>
+
         <button
           onClick={() => setAppMode('municipal')}
-          className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs font-medium transition-all ${
+          className={`h-full flex items-center space-x-1.5 transition-colors relative ${
             appMode === 'municipal'
-              ? 'bg-amber-600 text-white shadow-sm'
-              : 'text-gray-400 hover:text-white hover:bg-slate-800/50'
+              ? 'text-white font-semibold'
+              : 'text-terminal-muted hover:text-white'
           }`}
         >
-          <Truck className="w-3.5 h-3.5" />
-          <span>Municipal Operations</span>
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Municipal Operations & Lakehouse Queue</span>
+          {appMode === 'municipal' && (
+            <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
+          )}
         </button>
-      </div>
+      </nav>
 
-      {/* Region, Lakehouse Status & Info */}
+      {/* System Telemetry & Utilities */}
       <div className="flex items-center space-x-3 text-xs">
-        <div className="hidden md:flex items-center space-x-2 px-2.5 py-1 rounded bg-slate-900/80 border border-border-subtle font-mono text-[11px] text-gray-300">
-          <span className="text-gray-500">AWS:</span>
-          <span className="text-blue-300 font-semibold">ap-south-1</span>
+        {/* Snapshot Commit Indicator */}
+        <div className="hidden md:flex items-center space-x-1.5 text-terminal-muted text-xs tabular-nums px-2 py-1 bg-ground border border-terminal-border rounded-sm">
+          <Clock className="w-3 h-3 text-terminal-subtle" />
+          <span>{activeSnapshotStage || 'Snapshot: v4-latest'}</span>
         </div>
 
-        <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-900/80 border border-border-subtle text-[11px] text-gray-300">
-          <Clock className="w-3 h-3 text-emerald-400" />
-          <span>{activeSnapshotStage || 'Latest Snapshot'}</span>
-        </div>
-
-        {/* Live / Demo Mode Badge */}
+        {/* Live AWS Mode toggle */}
         <button
           onClick={onToggleAwsMode}
-          className={`flex items-center space-x-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-medium transition-all ${
+          className={`flex items-center space-x-1.5 px-2.5 py-1 text-xs font-mono rounded-sm border transition-colors ${
             isAwsConnected
-              ? 'bg-emerald-950/80 border-emerald-600/70 text-emerald-300 shadow-sm'
-              : 'bg-amber-950/80 border-amber-600/70 text-amber-300'
+              ? 'bg-[#15231e] border-[#254d3e] text-[#5fc39c]'
+              : 'bg-[#261f18] border-[#523d24] text-[#d9a441]'
           }`}
-          title="Click to toggle between Live AWS Mode & Deterministic Demo Mode"
+          title="Active cloud execution mode"
         >
-          {isAwsConnected ? <Wifi className="w-3.5 h-3.5 text-emerald-400" /> : <WifiOff className="w-3.5 h-3.5 text-amber-400" />}
-          <span>{isAwsConnected ? 'LIVE AWS MODE' : 'DEMO MODE'}</span>
+          <Radio className="w-3 h-3" />
+          <span>{isAwsConnected ? 'AWS CONNECTED' : 'DEMO MODE'}</span>
         </button>
 
-        {/* Architecture Drawer Toggle */}
+        {/* Architecture Inspector */}
         <button
           onClick={onOpenArchitecture}
-          className="flex items-center space-x-1 px-2.5 py-1.5 rounded bg-slate-800/80 hover:bg-slate-700 text-gray-200 border border-border-subtle transition-colors text-xs font-medium"
+          className="flex items-center space-x-1.5 px-2.5 py-1 text-xs text-white bg-raised hover:bg-[#25252b] border border-terminal-border rounded-sm transition-colors"
           title="Inspect Lakehouse Architecture & Verified Data Flow"
         >
-          <Layers className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Architecture</span>
+          <Layers className="w-3.5 h-3.5 text-terminal-muted" />
+          <span className="hidden sm:inline">Architecture</span>
         </button>
       </div>
     </header>
   );
 };
-

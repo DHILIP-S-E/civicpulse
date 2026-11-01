@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Hazard } from '../../types';
-import { Radio, X, CheckCircle2, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
+import { X, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface GeofenceSimulatorModalProps {
   isOpen: boolean;
@@ -47,113 +47,98 @@ export const GeofenceSimulatorModal: React.FC<GeofenceSimulatorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm select-none">
-      <div className="glass-panel w-full max-w-lg rounded-xl p-5 border border-border-subtle space-y-4 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 select-none">
+      <div className="bg-surface w-full max-w-lg p-5 border border-terminal-border space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-          <div className="flex items-center space-x-2">
-            <Radio className="w-4 h-4 text-amber-400 animate-pulse" />
-            <h3 className="font-bold text-sm text-white">Amazon Location Geofence Breach Simulator</h3>
+        <div className="flex items-center justify-between pb-3 border-b border-terminal-border">
+          <div className="text-sm font-semibold text-white">
+            Amazon Location Geofence Breach Evaluator
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-gray-400 hover:text-white"
+            className="p-1 text-terminal-muted hover:text-white"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Hazard Target Info */}
-        <div className="p-3 rounded-lg bg-slate-900/80 border border-border-subtle space-y-1 text-xs font-mono">
-          <div className="flex items-center justify-between text-gray-400">
-            <span>Target Geofence:</span>
-            <span className="text-cyan-300 font-bold">GEOFENCE-{hazard.hazard_id}</span>
+        <div className="p-3 bg-ground border border-terminal-border space-y-1 text-xs">
+          <div className="text-[11px] text-terminal-muted uppercase tracking-wider">
+            Target Geofence Polygon
           </div>
-          <div className="flex items-center justify-between text-gray-400">
-            <span>Location:</span>
-            <span className="text-white font-sans font-semibold">{hazard.location_name}</span>
-          </div>
-          <div className="flex items-center justify-between text-gray-400">
-            <span>Water Inundation:</span>
-            <span className="text-amber-400 font-semibold">{hazard.water_depth_cm ?? 0} cm</span>
+          <div className="font-semibold text-white">{hazard.location_name}</div>
+          <div className="font-mono text-[11px] text-terminal-muted tabular-nums">
+            ID: {hazard.hazard_id} · Center: {hazard.latitude.toFixed(4)}°N, {hazard.longitude.toFixed(4)}°E
           </div>
         </div>
 
-        {/* Step-by-Step Simulation Controls */}
+        {/* Action Controls */}
         <div className="space-y-2">
-          <span className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold block">
-            Simulate Device Telemetry Update
-          </span>
-
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              onClick={() => handleSimulate(false)}
-              disabled={isSimulating}
-              className="p-3 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-border-subtle text-left space-y-1 transition-all"
-            >
-              <div className="text-emerald-400 font-semibold flex items-center space-x-1">
-                <span>Outside Perimeter</span>
-              </div>
-              <p className="text-[10px] text-gray-400 font-sans">
-                Simulate commuter traveling 500m outside the inundation zone boundary.
-              </p>
-            </button>
-
+          <div className="text-xs text-terminal-muted leading-tight">
+            Transmit telemetry position packet from commuter device to Amazon Location Service Geofence Collection:
+          </div>
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleSimulate(true)}
               disabled={isSimulating}
-              className="p-3 rounded-lg bg-red-950/30 hover:bg-red-950/50 border border-red-800/40 text-left space-y-1 transition-all"
+              className="py-2 px-3 bg-raised hover:bg-[#25252c] text-white border border-terminal-border text-xs font-medium transition-colors"
             >
-              <div className="text-red-400 font-semibold flex items-center space-x-1">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                <span>Inside Perimeter</span>
-              </div>
-              <p className="text-[10px] text-gray-400 font-sans">
-                Simulate commuter crossing directly into active hazard polygon.
-              </p>
+              Simulate INSIDE (Breach)
+            </button>
+            <button
+              onClick={() => handleSimulate(false)}
+              disabled={isSimulating}
+              className="py-2 px-3 bg-surface hover:bg-raised text-terminal-muted hover:text-white border border-terminal-border text-xs transition-colors"
+            >
+              Simulate OUTSIDE (Clear)
             </button>
           </div>
         </div>
 
-        {/* Live / Simulated Result Output */}
+        {/* Results Stream */}
         {result && (
-          <div className={`p-3 rounded-lg border text-xs font-mono space-y-1.5 ${
-            result.breaches_detected?.length > 0
-              ? 'bg-red-950/40 border-red-700/50 text-red-200'
-              : 'bg-emerald-950/40 border-emerald-700/50 text-emerald-200'
-          }`}>
+          <div className="p-3 bg-ground border border-terminal-border space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-bold flex items-center space-x-1">
-                {result.breaches_detected?.length > 0 ? (
-                  <>
-                    <ShieldAlert className="w-4 h-4 text-red-400" />
-                    <span>GEOFENCE_ENTER DETECTED</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>POSITION CLEAR</span>
-                  </>
-                )}
-              </span>
-              <span className="text-[10px] text-gray-400">
+              <span className="font-mono text-[11px] text-terminal-muted uppercase">
                 {result.evaluation_source}
               </span>
+              <span className={`px-2 py-0.5 text-[10px] font-mono border rounded-sm ${
+                result.breaches_detected.length > 0
+                  ? 'border-hazard-critical text-hazard-critical bg-[#261619]'
+                  : 'border-hazard-resolved text-hazard-resolved bg-[#15231e]'
+              }`}>
+                {result.breaches_detected.length > 0 ? 'BREACH CONFIRMED' : 'CLEAR'}
+              </span>
             </div>
-            <p className="font-sans text-[11px] leading-snug">{result.message}</p>
+
+            <p className="text-terminal-muted text-[11px] leading-tight">
+              {result.message}
+            </p>
+
+            {result.breaches_detected.length > 0 && (
+              <div className="space-y-1 pt-1.5 border-t border-rule font-mono text-[11px] text-terminal-muted">
+                {result.breaches_detected.map((b: any, idx: number) => (
+                  <div key={idx} className="flex items-center justify-between">
+                    <span>Geofence: {b.geofence_id}</span>
+                    <span className="text-hazard-critical font-medium">{b.action}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        <div className="flex justify-end pt-2 border-t border-border-subtle">
+        {/* Footer */}
+        <div className="flex justify-end pt-2 border-t border-terminal-border">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-gray-300 text-xs font-medium"
+            className="px-4 py-1.5 bg-raised hover:bg-[#25252c] text-white text-xs border border-terminal-border transition-colors font-medium"
           >
-            Close Simulator
+            Close
           </button>
         </div>
       </div>
     </div>
   );
 };
-

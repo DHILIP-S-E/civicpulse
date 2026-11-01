@@ -1,6 +1,6 @@
 import React from 'react';
 import { FilterState } from '../../types';
-import { Filter, Droplets, Trash2, AlertOctagon, CheckCircle2, Box } from 'lucide-react';
+import { Layers, Box } from 'lucide-react';
 
 interface HazardFilterPanelProps {
   filters: FilterState;
@@ -13,80 +13,80 @@ export const HazardFilterPanel: React.FC<HazardFilterPanelProps> = ({ filters, s
   };
 
   return (
-    <div className="space-y-2 pt-2 border-t border-border-subtle">
-      <div className="flex items-center space-x-1.5 text-[11px] uppercase tracking-wider text-gray-400 font-semibold">
-        <Filter className="w-3.5 h-3.5 text-blue-400" />
+    <div className="space-y-2 pt-3 border-t border-terminal-border">
+      <div className="flex items-center space-x-1.5 text-[11px] font-medium uppercase tracking-wider text-terminal-muted">
+        <Layers className="w-3.5 h-3.5" />
         <span>Spatial Hazard Layers</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-1.5 text-xs">
+      <div className="grid grid-cols-2 gap-1 text-xs">
         {/* Floods */}
         <button
           onClick={() => toggle('showFloods')}
-          className={`flex items-center space-x-2 px-2.5 py-1.5 rounded border transition-colors ${
+          className={`px-2 py-1.5 text-left border transition-colors flex items-center justify-between ${
             filters.showFloods
-              ? 'bg-blue-950/50 border-blue-600/50 text-blue-200'
-              : 'bg-slate-900/40 border-border-subtle text-gray-500'
+              ? 'bg-raised border-terminal-border text-white border-l-2 border-l-hazard-critical'
+              : 'bg-surface border-terminal-border text-terminal-muted hover:text-white'
           }`}
         >
-          <Droplets className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-          <span className="truncate">Floods & Inundation</span>
+          <span className="truncate">Inundation Zones</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-hazard-critical shrink-0 ml-1"></span>
         </button>
 
-        {/* Waste Overflow */}
+        {/* Sanitation Overflow */}
         <button
           onClick={() => toggle('showWaste')}
-          className={`flex items-center space-x-2 px-2.5 py-1.5 rounded border transition-colors ${
+          className={`px-2 py-1.5 text-left border transition-colors flex items-center justify-between ${
             filters.showWaste
-              ? 'bg-amber-950/50 border-amber-600/50 text-amber-200'
-              : 'bg-slate-900/40 border-border-subtle text-gray-500'
+              ? 'bg-raised border-terminal-border text-white border-l-2 border-l-hazard-moderate'
+              : 'bg-surface border-terminal-border text-terminal-muted hover:text-white'
           }`}
         >
-          <Trash2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span className="truncate">Sanitation Overflow</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-hazard-moderate shrink-0 ml-1"></span>
         </button>
 
-        {/* Debris / Road Damage */}
+        {/* Debris / Obstruction */}
         <button
           onClick={() => toggle('showDebris')}
-          className={`flex items-center space-x-2 px-2.5 py-1.5 rounded border transition-colors ${
+          className={`px-2 py-1.5 text-left border transition-colors flex items-center justify-between ${
             filters.showDebris
-              ? 'bg-purple-950/50 border-purple-600/50 text-purple-200'
-              : 'bg-slate-900/40 border-border-subtle text-gray-500'
+              ? 'bg-raised border-terminal-border text-white border-l-2 border-l-accent'
+              : 'bg-surface border-terminal-border text-terminal-muted hover:text-white'
           }`}
         >
-          <AlertOctagon className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-          <span className="truncate">Debris & Road Obstruction</span>
+          <span className="truncate">Road Obstructions</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 ml-1"></span>
         </button>
 
         {/* Resolved */}
         <button
           onClick={() => toggle('showResolved')}
-          className={`flex items-center space-x-2 px-2.5 py-1.5 rounded border transition-colors ${
+          className={`px-2 py-1.5 text-left border transition-colors flex items-center justify-between ${
             filters.showResolved
-              ? 'bg-emerald-950/50 border-emerald-600/50 text-emerald-200'
-              : 'bg-slate-900/40 border-border-subtle text-gray-500'
+              ? 'bg-raised border-terminal-border text-white border-l-2 border-l-hazard-resolved'
+              : 'bg-surface border-terminal-border text-terminal-muted hover:text-white'
           }`}
         >
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          <span className="truncate">Resolved Incidents</span>
+          <span className="truncate">Resolved Corridors</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-hazard-resolved shrink-0 ml-1"></span>
         </button>
       </div>
 
-      {/* 3D Extrusion Toggle */}
-      <div className="pt-1 flex items-center justify-between px-2.5 py-1.5 rounded bg-slate-900/70 border border-border-subtle text-xs">
-        <span className="flex items-center space-x-1.5 text-gray-300">
-          <Box className="w-3.5 h-3.5 text-cyan-400" />
-          <span>3D Water Depth Extrusion</span>
-        </span>
+      {/* 3D Extrusion Depth Toggle */}
+      <div className="flex items-center justify-between px-2.5 py-1.5 bg-surface border border-terminal-border text-xs">
+        <label htmlFor="extrusion-depth" className="flex items-center space-x-1.5 text-terminal-muted cursor-pointer">
+          <Box className="w-3.5 h-3.5 text-accent" />
+          <span>Volumetric 3D Water Depth</span>
+        </label>
         <input
+          id="extrusion-depth"
           type="checkbox"
           checked={filters.showExtrusion3D}
           onChange={() => toggle('showExtrusion3D')}
-          className="rounded border-gray-700 text-blue-600 bg-slate-800 cursor-pointer w-4 h-4"
+          className="cursor-pointer accent-accent w-4 h-4"
         />
       </div>
     </div>
   );
 };
-

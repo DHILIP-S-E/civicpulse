@@ -1,13 +1,6 @@
 import React from 'react';
 import { RouteCompareResponse } from '../../types';
-import {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Milestone,
-  Shield,
-  ArrowRight
-} from 'lucide-react';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface RouteComparisonCardProps {
   comparison: RouteCompareResponse;
@@ -17,108 +10,92 @@ export const RouteComparisonCard: React.FC<RouteComparisonCardProps> = ({ compar
   const { standard_route, hazard_avoiding_route, time_delta_minutes, distance_delta_km } = comparison;
 
   return (
-    <div className="space-y-2.5 pt-1">
-      <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold flex items-center justify-between">
-        <span>Route Exposure Analysis</span>
-        <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/40">
-          {comparison.routing_source.includes('Amazon') ? 'Amazon Location' : 'Topological Engine'}
+    <div className="space-y-3 pt-2">
+      {/* Header and Source */}
+      <div className="flex items-center justify-between text-[11px] text-terminal-muted border-b border-terminal-border pb-1">
+        <span className="font-medium uppercase tracking-wider">Corridor Exposure Summary</span>
+        <span className="tabular-nums text-terminal-subtle">
+          {comparison.routing_source.includes('Amazon') ? 'Amazon Location Routes' : 'Spatial Graph Engine'}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        {/* Standard Route Box (Red Dashed) */}
-        <div className="p-2.5 rounded-lg bg-red-950/20 border border-red-800/30 space-y-1.5">
-          <div className="flex items-center space-x-1.5 font-semibold text-red-400 pb-1 border-b border-red-900/40">
-            <span className="w-3 border-b-2 border-dashed border-red-500 inline-block"></span>
-            <span>Standard Route</span>
-          </div>
-          <div className="flex items-center justify-between text-gray-300">
-            <span className="flex items-center space-x-1 text-[11px] text-gray-400">
-              <Milestone className="w-3 h-3" />
-              <span>Distance</span>
-            </span>
-            <span className="font-mono font-semibold">{standard_route.distance_km} km</span>
-          </div>
-          <div className="flex items-center justify-between text-gray-300">
-            <span className="flex items-center space-x-1 text-[11px] text-gray-400">
-              <Clock className="w-3 h-3" />
-              <span>Time</span>
-            </span>
-            <span className="font-mono font-semibold">{standard_route.duration_minutes} min</span>
-          </div>
-          <div className="flex items-center justify-between pt-1 border-t border-red-900/30">
-            <span className="text-[11px] text-red-300">Hazard Hits</span>
-            <span className="font-mono font-bold text-red-400 bg-red-950/60 px-1.5 py-0.2 rounded border border-red-800/40">
-              {standard_route.hazard_intersections.length}
-            </span>
-          </div>
-        </div>
+      {/* Structured Comparison Table */}
+      <table className="w-full text-xs border-collapse">
+        <thead>
+          <tr className="border-b border-terminal-border text-[11px] text-terminal-muted">
+            <th className="text-left font-medium pb-1.5">Metric</th>
+            <th className="text-right font-medium pb-1.5">Standard</th>
+            <th className="text-right font-medium pb-1.5 text-hazard-resolved">Safe Corridor</th>
+            <th className="text-right font-medium pb-1.5">Delta</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-terminal-border tabular-nums text-xs">
+          <tr>
+            <td className="py-1.5 text-terminal-muted">Distance</td>
+            <td className="text-right py-1.5 font-medium">{standard_route.distance_km} km</td>
+            <td className="text-right py-1.5 font-medium text-white">
+              {hazard_avoiding_route ? `${hazard_avoiding_route.distance_km} km` : '—'}
+            </td>
+            <td className="text-right py-1.5 text-terminal-muted">
+              {distance_delta_km !== undefined ? `+${distance_delta_km} km` : '—'}
+            </td>
+          </tr>
+          <tr>
+            <td className="py-1.5 text-terminal-muted">Duration</td>
+            <td className="text-right py-1.5 font-medium">{standard_route.duration_minutes} min</td>
+            <td className="text-right py-1.5 font-medium text-white">
+              {hazard_avoiding_route ? `${hazard_avoiding_route.duration_minutes} min` : '—'}
+            </td>
+            <td className="text-right py-1.5 text-terminal-muted">
+              {time_delta_minutes !== undefined ? `+${time_delta_minutes} min` : '—'}
+            </td>
+          </tr>
+          <tr>
+            <td className="py-1.5 text-terminal-muted">Hazard Exposure</td>
+            <td className="text-right py-1.5 font-semibold text-hazard-critical">
+              {standard_route.hazard_intersections.length} polygons
+            </td>
+            <td className="text-right py-1.5 font-semibold text-hazard-resolved">
+              {hazard_avoiding_route ? `${hazard_avoiding_route.hazard_intersections.length} polygons` : '—'}
+            </td>
+            <td className="text-right py-1.5 font-medium text-hazard-resolved">
+              {hazard_avoiding_route && standard_route.hazard_intersections.length > 0 ? '100% Cleared' : '0'}
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-        {/* Safe Corridor Box (Green Solid) */}
-        <div className="p-2.5 rounded-lg bg-emerald-950/20 border border-emerald-800/30 space-y-1.5">
-          <div className="flex items-center space-x-1.5 font-semibold text-emerald-400 pb-1 border-b border-emerald-900/40">
-            <span className="w-3 border-b-2 border-solid border-emerald-500 inline-block"></span>
-            <span>Safe Corridor</span>
+      {/* Intersected Hazards Detail */}
+      {standard_route.hazard_intersections.length > 0 && (
+        <div className="p-2.5 bg-surface border border-terminal-border text-xs space-y-1.5">
+          <div className="flex items-center space-x-1.5 text-hazard-critical text-[11px] font-medium">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span>Standard Route Breaches {standard_route.hazard_intersections.length} Hazard Geofences</span>
           </div>
-          <div className="flex items-center justify-between text-gray-300">
-            <span className="flex items-center space-x-1 text-[11px] text-gray-400">
-              <Milestone className="w-3 h-3" />
-              <span>Distance</span>
-            </span>
-            <span className="font-mono font-semibold">
-              {hazard_avoiding_route ? `${hazard_avoiding_route.distance_km} km` : 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-gray-300">
-            <span className="flex items-center space-x-1 text-[11px] text-gray-400">
-              <Clock className="w-3 h-3" />
-              <span>Time</span>
-            </span>
-            <span className="font-mono font-semibold">
-              {hazard_avoiding_route ? `${hazard_avoiding_route.duration_minutes} min` : 'N/A'}
-            </span>
-          </div>
-          <div className="flex items-center justify-between pt-1 border-t border-emerald-900/30">
-            <span className="text-[11px] text-emerald-300">Hazard Hits</span>
-            <span className="font-mono font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-800/40">
-              {hazard_avoiding_route ? hazard_avoiding_route.hazard_intersections.length : 0}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Delta Metrics Pill */}
-      {hazard_avoiding_route && (
-        <div className="p-2 rounded-lg bg-slate-900/80 border border-border-subtle flex items-center justify-between text-[11px] font-mono">
-          <span className="text-gray-400">Detour Cost:</span>
-          <div className="flex items-center space-x-2">
-            <span className="text-amber-400 font-semibold">
-              +{distance_delta_km || 0} km
-            </span>
-            <span>•</span>
-            <span className="text-amber-400 font-semibold">
-              +{time_delta_minutes || 0} min
-            </span>
+          <div className="space-y-1 pl-4 text-terminal-muted text-[11px]">
+            {standard_route.hazard_intersections.map((hz) => (
+              <div key={hz.hazard_id} className="flex items-center justify-between">
+                <span className="font-mono text-white truncate max-w-[190px]">
+                  {hz.hazard_id} ({hz.location_name})
+                </span>
+                <span className="text-hazard-critical text-[10px] shrink-0">
+                  {hz.water_depth_cm ? `${hz.water_depth_cm} cm` : hz.severity}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Warnings & Honesty Callout */}
-      {standard_route.warnings.length > 0 && (
-        <div className="p-2.5 rounded-lg bg-amber-950/30 border border-amber-800/40 text-[11px] text-amber-200 space-y-1">
-          <div className="flex items-center space-x-1 font-semibold text-amber-300">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
-            <span>Hazard Corridor Warnings</span>
-          </div>
-          {standard_route.warnings.map((w, idx) => (
-            <p key={idx} className="leading-tight text-gray-300">{w}</p>
-          ))}
-          <p className="text-[10px] text-gray-400 italic pt-1 border-t border-amber-900/40">
-            Notice: Avoiding mapped polygons significantly reduces risk but does not guarantee completely dry passage on local residential alleys.
-          </p>
+      {/* Safe Corridor Confirmation */}
+      {hazard_avoiding_route && hazard_avoiding_route.hazard_intersections.length === 0 && (
+        <div className="p-2 bg-surface border border-terminal-border flex items-center space-x-2 text-xs text-hazard-resolved">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+          <span className="text-[11px] text-terminal-muted">
+            Safe Corridor bypasses Sellur railway underpass via arterial bypass.
+          </span>
         </div>
       )}
     </div>
   );
 };
-

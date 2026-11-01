@@ -5,47 +5,46 @@ export const MapLegend: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="absolute bottom-24 right-4 z-10 glass-panel rounded-lg p-2.5 max-w-[210px] text-xs font-mono select-none">
+    <div className="absolute bottom-20 right-4 z-10 bg-surface border border-terminal-border p-2.5 max-w-[200px] text-xs select-none">
       <div
-        className="flex items-center justify-between cursor-pointer pb-1 mb-1.5 border-b border-border-subtle"
+        className="flex items-center justify-between cursor-pointer pb-1 mb-1.5 border-b border-terminal-border"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <span className="font-semibold text-gray-200 flex items-center space-x-1.5 font-sans">
-          <Layers className="w-3.5 h-3.5 text-blue-400" />
+        <span className="font-medium text-white flex items-center space-x-1.5">
+          <Layers className="w-3.5 h-3.5 text-accent" />
           <span>Operational Legend</span>
         </span>
-        {collapsed ? <ChevronUp className="w-3.5 h-3.5 text-gray-400" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400" />}
+        {collapsed ? <ChevronUp className="w-3.5 h-3.5 text-terminal-muted" /> : <ChevronDown className="w-3.5 h-3.5 text-terminal-muted" />}
       </div>
 
       {!collapsed && (
-        <div className="space-y-1.5 text-[11px] text-gray-300">
+        <div className="space-y-1.5 text-[11px] text-terminal-muted">
           <div className="flex items-center space-x-2">
-            <span className="w-3 h-3 rounded-sm bg-[#EF4444] border border-[#F87171]/80 inline-block opacity-75"></span>
-            <span>Critical Hazard</span>
+            <span className="w-2.5 h-2.5 bg-hazard-critical inline-block"></span>
+            <span className="text-white">Critical Inundation</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="w-3 h-3 rounded-sm bg-[#F59E0B] border border-[#FBBF24]/80 inline-block opacity-75"></span>
-            <span>Moderate Hazard</span>
+            <span className="w-2.5 h-2.5 bg-hazard-moderate inline-block"></span>
+            <span className="text-white">Moderate Hazard</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="w-3 h-3 rounded-sm bg-[#10B981] border border-[#34D399]/80 inline-block opacity-60"></span>
-            <span>Resolved Zone</span>
+            <span className="w-2.5 h-2.5 bg-hazard-resolved inline-block"></span>
+            <span className="text-white">Resolved Zone</span>
           </div>
-          <div className="flex items-center space-x-2 pt-1 border-t border-border-subtle/50">
-            <span className="w-4 border-b-2 border-dashed border-[#EF4444] inline-block"></span>
+          <div className="flex items-center space-x-2 pt-1 border-t border-terminal-border">
+            <span className="w-4 border-b-2 border-dashed border-hazard-critical inline-block"></span>
             <span>Standard Route</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="w-4 border-b-2 border-solid border-[#10B981] inline-block"></span>
+            <span className="w-4 border-b-2 border-solid border-hazard-resolved inline-block"></span>
             <span>Safe Corridor</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#06B6D4] border border-white inline-block"></span>
-            <span>Municipal Truck</span>
+            <span className="w-2 h-2 rounded-full bg-accent inline-block"></span>
+            <span>Municipal Unit</span>
           </div>
         </div>
       )}
     </div>
   );
 };
-
