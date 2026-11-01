@@ -7,7 +7,7 @@ import {
   Footprints,
   Truck,
   Check,
-  MapPin
+  Compass
 } from 'lucide-react';
 
 interface RoutePreset {
@@ -20,7 +20,7 @@ interface RoutePreset {
 export const MADURAI_PRESETS: RoutePreset[] = [
   {
     id: 'preset-1',
-    name: 'Periyar Bus Stand → Mattuthavani',
+    name: 'Periyar Bus Stand -> Mattuthavani',
     origin: {
       place_id: 'MDU-PLC-001',
       name: 'Periyar Bus Stand',
@@ -40,7 +40,7 @@ export const MADURAI_PRESETS: RoutePreset[] = [
   },
   {
     id: 'preset-2',
-    name: 'Arapalayam → Goripalayam',
+    name: 'Arapalayam -> Goripalayam',
     origin: {
       place_id: 'MDU-PLC-005',
       name: 'Arapalayam Bus Stand',
@@ -60,7 +60,7 @@ export const MADURAI_PRESETS: RoutePreset[] = [
   },
   {
     id: 'preset-3',
-    name: 'Kalavasal → Vandiyur Teppakulam',
+    name: 'Kalavasal -> Vandiyur Teppakulam',
     origin: {
       place_id: 'MDU-PLC-008',
       name: 'Kalavasal 4-Roads',
@@ -134,8 +134,9 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
     <div className="bg-[#111827] rounded-xl p-4 border border-[rgba(148,163,184,0.15)] space-y-4 shadow-md">
       {/* Header */}
       <div>
-        <h2 className="text-base font-bold text-white flex items-center space-x-2">
-          <span>🚦 Plan Your Route</span>
+        <h2 className="text-sm font-semibold text-white flex items-center space-x-2">
+          <Compass className="w-4 h-4 text-blue-400" />
+          <span>Plan Safe Route</span>
         </h2>
         <p className="text-xs text-slate-400 mt-0.5">
           Find safe corridors avoiding real-time flood zones across Madurai
@@ -145,7 +146,7 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
       {/* Popular Commute Presets */}
       <div>
         <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">
-          Popular Commutes
+          Popular Corridors
         </label>
         <div className="space-y-1.5">
           {MADURAI_PRESETS.map((preset) => {
@@ -190,7 +191,7 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
         <div className="flex justify-center -my-2.5 relative z-10">
           <button
             onClick={handleSwap}
-            className="p-1.5 bg-[#1F2937] hover:bg-slate-700 text-slate-300 hover:text-white border border-[rgba(148,163,184,0.2)] rounded-full transition-colors shadow-md"
+            className="p-1.5 bg-[#1F2937] hover:bg-slate-700 text-slate-300 hover:text-white border border-[rgba(148,163,184,0.2)] rounded-full transition-colors shadow-md cursor-pointer"
             title="Swap Origin and Destination"
           >
             <ArrowUpDown className="w-3.5 h-3.5" />
@@ -220,7 +221,7 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
         <div className="grid grid-cols-3 gap-1.5 bg-[#0B0F19] p-1 rounded-lg border border-[rgba(148,163,184,0.15)]">
           <button
             onClick={() => setProfile('Car')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${
               profile === 'Car' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -229,7 +230,7 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
           </button>
           <button
             onClick={() => setProfile('Walking')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${
               profile === 'Walking' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -238,7 +239,7 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
           </button>
           <button
             onClick={() => setProfile('Truck')}
-            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors ${
+            className={`flex items-center justify-center space-x-1.5 py-1.5 rounded text-xs transition-colors cursor-pointer ${
               profile === 'Truck' ? 'bg-[#1F2937] text-white font-semibold shadow' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -248,14 +249,14 @@ export const OriginDestinationSelector: React.FC<OriginDestinationSelectorProps>
         </div>
       </div>
 
-      {/* Big Prominent Action Button */}
+      {/* Prominent Action Button */}
       <button
         onClick={handleCalculate}
         disabled={isLoading || !selectedOrigin || !selectedDestination}
-        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:cursor-not-allowed"
+        className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg shadow hover:shadow-blue-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:cursor-not-allowed"
       >
-        <Navigation className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-        <span>{isLoading ? 'Scanning Safe Routes...' : 'Check My Route'}</span>
+        <Navigation className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+        <span>{isLoading ? 'Scanning Safe Routes...' : 'Compare Safe Corridors'}</span>
       </button>
     </div>
   );

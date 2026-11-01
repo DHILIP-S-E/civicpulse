@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import { Hazard } from '../../types';
-import { X, CheckCircle2, AlertTriangle } from 'lucide-react';
+import {
+  ShieldAlert,
+  MapPin,
+  CheckCircle2,
+  AlertTriangle,
+  X,
+  Play
+} from 'lucide-react';
 
 interface GeofenceSimulatorModalProps {
   isOpen: boolean;
   onClose: () => void;
   hazard: Hazard | null;
-  onRunSimulation: (
-    hazard: Hazard,
-    isInside: boolean
-  ) => Promise<{
-    submission_status: string;
-    is_confirmed: boolean;
-    breaches_detected: any[];
-    evaluation_source: string;
-    message: string;
-  }>;
+  onRunSimulation: (hazard: Hazard, isInside: boolean) => Promise<any>;
 }
 
 export const GeofenceSimulatorModal: React.FC<GeofenceSimulatorModalProps> = ({
@@ -24,116 +22,126 @@ export const GeofenceSimulatorModal: React.FC<GeofenceSimulatorModalProps> = ({
   hazard,
   onRunSimulation,
 }) => {
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [result, setResult] = useState<any | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
   if (!isOpen || !hazard) return null;
 
   const handleSimulate = async (isInside: boolean) => {
-    setIsSimulating(true);
+    setIsRunning(true);
     setResult(null);
     try {
       const res = await onRunSimulation(hazard, isInside);
-      setResult({ ...res, isInside });
+      setResult(res);
     } catch (err: any) {
-      setResult({
-        submission_status: 'FAILED',
-        message: err.message || 'Geofence simulation failed',
-        breaches_detected: []
-      });
+      setResult({ evaluation_status: 'ERROR', message: err.message });
     } finally {
-      setIsSimulating(false);
+      setIsRunning(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 select-none">
-      <div className="bg-surface w-full max-w-lg p-5 border border-terminal-border space-y-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm select-none">
+      <div className="bg-[#111827] w-full max-w-md p-6 rounded-2xl border border-[rgba(148,163,184,0.2)] space-y-4 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-terminal-border">
-          <div className="text-sm font-semibold text-white">
-            Amazon Location Geofence Breach Evaluator
+        <div className="flex items-center justify-between pb-3 border-b border-[rgba(148,163,184,0.15)]">
+          <div className="flex items-center space-x-2">
+            <ShieldAlert className="w-5 h-5 text-amber-400" />
+            <h3 className="text-sm font-bold text-white">
+              Simulate Commuter in Flood Zone
+            </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-terminal-muted hover:text-white"
+            className="p-1 text-slate-400 hover:text-white rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Hazard Target Info */}
-        <div className="p-3 bg-ground border border-terminal-border space-y-1 text-xs">
-          <div className="text-[11px] text-terminal-muted uppercase tracking-wider">
-            Target Geofence Polygon
+        <div className="p-3 bg-[#0B0F19] rounded-xl border border-[rgba(148,163,184,0.15)] space-y-1.5">
+          <div className="text-xs font-semibold text-white truncate">
+            {hazard.location_name}
           </div>
-          <div className="font-semibold text-white">{hazard.location_name}</div>
-          <div className="font-mono text-[11px] text-terminal-muted tabular-nums">
-            ID: {hazard.hazard_id} · Center: {hazard.latitude.toFixed(4)}°N, {hazard.longitude.toFixed(4)}°E
+          <div className="text-[11px] text-slate-400 flex items-center space-x-1">
+            <MapPin className="w-3.5 h-3.5 text-slate-500" />
+            <span>
+              ID: {hazard.hazard_id} - Center: {hazard.latitude.toFixed(4)}N, {hazard.longitude.toFixed(4)}E
+            </span>
           </div>
-        </div>
-
-        {/* Action Controls */}
-        <div className="space-y-2">
-          <div className="text-xs text-terminal-muted leading-tight">
-            Transmit telemetry position packet from commuter device to Amazon Location Service Geofence Collection:
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => handleSimulate(true)}
-              disabled={isSimulating}
-              className="py-2 px-3 bg-raised hover:bg-[#25252c] text-white border border-terminal-border text-xs font-medium transition-colors"
-            >
-              Simulate INSIDE (Breach)
-            </button>
-            <button
-              onClick={() => handleSimulate(false)}
-              disabled={isSimulating}
-              className="py-2 px-3 bg-surface hover:bg-raised text-terminal-muted hover:text-white border border-terminal-border text-xs transition-colors"
-            >
-              Simulate OUTSIDE (Clear)
-            </button>
+          <div className="text-[11px] text-amber-400 font-medium">
+            Active Depth: {hazard.water_depth_cm} cm - Severity: {hazard.severity}
           </div>
         </div>
 
-        {/* Results Stream */}
-        {result && (
-          <div className="p-3 bg-ground border border-terminal-border space-y-2 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] text-terminal-muted uppercase">
-                {result.evaluation_source}
-              </span>
-              <span className={`px-2 py-0.5 text-[10px] font-mono border rounded-sm ${
-                result.breaches_detected.length > 0
-                  ? 'border-hazard-critical text-hazard-critical bg-[#261619]'
-                  : 'border-hazard-resolved text-hazard-resolved bg-[#15231e]'
-              }`}>
-                {result.breaches_detected.length > 0 ? 'BREACH CONFIRMED' : 'CLEAR'}
-              </span>
+        <p className="text-xs text-slate-300 leading-relaxed">
+          Simulate a commuter vehicle's GPS position crossing into this mapped flood boundary to verify automatic geofence alerts.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <button
+            disabled={isRunning}
+            onClick={() => handleSimulate(true)}
+            className="p-3 bg-red-600/15 hover:bg-red-600/25 border border-red-500/40 rounded-xl text-left transition-all cursor-pointer disabled:opacity-50"
+          >
+            <div className="text-xs font-bold text-red-400 flex items-center space-x-1.5 mb-1">
+              <AlertTriangle className="w-4 h-4" />
+              <span>Simulate Breach</span>
             </div>
+            <div className="text-[11px] text-slate-300">
+              Submit GPS coordinate inside flooded zone
+            </div>
+          </button>
 
-            <p className="text-terminal-muted text-[11px] leading-tight">
-              {result.message}
-            </p>
+          <button
+            disabled={isRunning}
+            onClick={() => handleSimulate(false)}
+            className="p-3 bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/40 rounded-xl text-left transition-all cursor-pointer disabled:opacity-50"
+          >
+            <div className="text-xs font-bold text-emerald-400 flex items-center space-x-1.5 mb-1">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Simulate Safe Point</span>
+            </div>
+            <div className="text-[11px] text-slate-300">
+              Submit GPS coordinate 1.5km outside zone
+            </div>
+          </button>
+        </div>
 
-            {result.breaches_detected.length > 0 && (
-              <div className="space-y-1 pt-1.5 border-t border-rule font-mono text-[11px] text-terminal-muted">
-                {result.breaches_detected.map((b: any, idx: number) => (
-                  <div key={idx} className="flex items-center justify-between">
-                    <span>Geofence: {b.geofence_id}</span>
-                    <span className="text-hazard-critical font-medium">{b.action}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Simulation Output */}
+        {result && (
+          <div
+            className={`p-3 rounded-xl border text-xs space-y-1.5 animate-in fade-in duration-200 ${
+              result.evaluation_status === 'BREACH_DETECTED'
+                ? 'bg-red-950/20 border-red-500/40 text-red-300'
+                : 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
+            }`}
+          >
+            <div className="font-bold flex items-center space-x-1.5">
+              {result.evaluation_status === 'BREACH_DETECTED' ? (
+                <>
+                  <AlertTriangle className="w-4 h-4 text-red-400" />
+                  <span>ALERT: Flood Boundary Breached</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>SAFE: Position Outside Hazard Zone</span>
+                </>
+              )}
+            </div>
+            <div className="text-[11px] text-slate-300">
+              {result.message || 'Geofence evaluation completed successfully.'}
+            </div>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="flex justify-end pt-2 border-t border-terminal-border">
+        <div className="pt-2 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-1.5 bg-raised hover:bg-[#25252c] text-white text-xs border border-terminal-border transition-colors font-medium"
+            className="px-4 py-2 bg-[#0B0F19] hover:bg-slate-800 text-slate-300 text-xs rounded-lg border border-[rgba(148,163,184,0.15)] transition-colors cursor-pointer"
           >
             Close
           </button>

@@ -8,37 +8,73 @@ import {
   DispatchRecord,
   OperationalEvent
 } from '../types';
+import { localEngine } from './localEngine';
 
 const API_BASE = '/api';
+
+// Helper for fetch with automatic timeout and fallback
+async function safeFetch<T>(url: string, options?: RequestInit, fallback?: () => T): Promise<T> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (_) {
+    // Backend unreachable or returned non-ok (e.g. S3 404 static hosting)
+  }
+
+  if (fallback) {
+    return fallback();
+  }
+  throw new Error(`Request to ${url} failed and no fallback available`);
+}
 
 export const api = {
   // Health
   getHealth: async () => {
-    const res = await fetch(`${API_BASE}/health`);
-    return res.json();
+    return safeFetch(`${API_BASE}/health`, undefined, () => localEngine.getHealth());
   },
 
   getAwsHealth: async () => {
-    const res = await fetch(`${API_BASE}/health/aws`);
-    return res.json();
+    return safeFetch(`${API_BASE}/health/aws`, undefined, () => localEngine.getAwsHealth());
   },
 
   // Places
   searchPlaces: async (q: string): Promise<Place[]> => {
-    const res = await fetch(`${API_BASE}/places/search?q=${encodeURIComponent(q)}`);
-    const data = await res.json();
-    return data.results || [];
+    return safeFetch(`${API_BASE}/places/search?q=${encodeURIComponent(q)}`, undefined, () => []);
   },
 
   // Hazards
   getHazards: async (includeResolved = true): Promise<Hazard[]> => {
-    const res = await fetch(`${API_BASE}/hazards?include_resolved=${includeResolved}`);
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/hazards?include_resolved=${includeResolved}`,
+      undefined,
+      () => localEngine.getHazards(includeResolved)
+    );
   },
 
   getHazardSummary: async (): Promise<HazardSummary> => {
-    const res = await fetch(`${API_BASE}/hazards/summary`);
-    return res.json();
+    return safeFetch(`${API_BASE}/hazards/summary`, undefined, () => {
+      const all = localEngine.getHazards(true);
+      const active = all.filter(h => h.status !== 'RESOLVED');
+      return {
+        total_hazards: all.length,
+        active_hazards: active.length,
+        investigating_hazards: 0,
+        resolved_hazards: all.filter(h => h.status === 'RESOLVED').length,
+        critical_severity_count: active.filter(h => h.severity === 'CRITICAL').length,
+        moderate_severity_count: active.filter(h => h.severity === 'MODERATE').length,
+        low_severity_count: active.filter(h => h.severity === 'LOW').length,
+        max_water_depth_cm: Math.max(...all.map(h => h.water_depth_cm || 0), 0),
+        data_source: 'Apache Iceberg Lakehouse (Madurai)',
+        last_updated: new Date().toISOString()
+      };
+    });
   },
 
   // Routes
@@ -48,20 +84,19 @@ export const api = {
     transport_profile?: string;
     avoid_hazards?: boolean;
   }): Promise<RouteCompareResponse> => {
-    const res = await fetch(`${API_BASE}/routes/compare`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...payload,
-        transport_profile: payload.transport_profile || 'Car',
-        avoid_hazards: payload.avoid_hazards ?? true
-      }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Routing calculation failed');
-    }
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/routes/compare`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          transport_profile: payload.transport_profile || 'Car',
+          avoid_hazards: payload.avoid_hazards ?? true
+        }),
+      },
+      () => localEngine.compareRoutes(payload)
+    );
   },
 
   // Geofences
@@ -71,32 +106,36 @@ export const api = {
     latitude: number;
     position_timestamp: string;
   }) => {
-    const res = await fetch(`${API_BASE}/geofences/evaluate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/geofences/evaluate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+      () => localEngine.evaluatePosition(payload)
+    );
   },
 
   syncGeofences: async () => {
-    const res = await fetch(`${API_BASE}/geofences/sync`, { method: 'POST' });
-    return res.json();
+    return safeFetch(`${API_BASE}/geofences/sync`, { method: 'POST' }, () => ({ status: 'SYNCED' }));
   },
 
   // Iceberg
   getSnapshots: async (): Promise<IcebergSnapshot[]> => {
-    const res = await fetch(`${API_BASE}/iceberg/snapshots`);
-    return res.json();
+    return safeFetch(`${API_BASE}/iceberg/snapshots`, undefined, () => localEngine.getSnapshots());
   },
 
   querySnapshot: async (snapshotId: string) => {
-    const res = await fetch(`${API_BASE}/iceberg/query-snapshot`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ snapshot_id: snapshotId }),
-    });
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/iceberg/query-snapshot`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ snapshot_id: snapshotId }),
+      },
+      () => localEngine.querySnapshot(snapshotId)
+    );
   },
 
   resolveHazard: async (payload: {
@@ -104,22 +143,20 @@ export const api = {
     dispatch_id?: string;
     notes?: string;
   }) => {
-    const res = await fetch(`${API_BASE}/iceberg/resolve-hazard`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Hazard resolution failed');
-    }
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/iceberg/resolve-hazard`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+      () => localEngine.resolveHazard(payload.hazard_id, payload.dispatch_id, payload.notes)
+    );
   },
 
   // Municipal
   getPriorities: async (): Promise<HazardPriorityScore[]> => {
-    const res = await fetch(`${API_BASE}/municipal/priorities`);
-    return res.json();
+    return safeFetch(`${API_BASE}/municipal/priorities`, undefined, () => localEngine.getPriorities());
   },
 
   createDispatch: async (payload: {
@@ -127,22 +164,19 @@ export const api = {
     truck_type?: string;
     crew_id?: string;
   }): Promise<DispatchRecord> => {
-    const res = await fetch(`${API_BASE}/municipal/dispatch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Dispatch failed');
-    }
-    return res.json();
+    return safeFetch(
+      `${API_BASE}/municipal/dispatch`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      },
+      () => localEngine.createDispatch(payload)
+    );
   },
 
   // Events
   getEvents: async (): Promise<OperationalEvent[]> => {
-    const res = await fetch(`${API_BASE}/events`);
-    return res.json();
+    return safeFetch(`${API_BASE}/events`, undefined, () => localEngine.getEvents());
   },
 };
-

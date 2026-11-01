@@ -11,7 +11,7 @@ const EVENT_LABELS: Record<string, string> = {
   'HAZARD_LAYER_REFRESHED': 'Flood map updated',
   'ROUTE_CALCULATED': 'Safe route found',
   'HAZARD_RESOLUTION_REQUESTED': 'Road clearance requested',
-  'HAZARD_RESOLVED': 'Road cleared — map updated',
+  'HAZARD_RESOLVED': 'Road cleared - map updated',
   'SNAPSHOT_QUERIED': 'Historical flood map loaded',
   'GEOFENCE_EVALUATED': 'Flood zone check complete',
 };

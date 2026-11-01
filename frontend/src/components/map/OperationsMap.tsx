@@ -51,7 +51,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
               'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
             ],
             tileSize: 256,
-            attribution: '© Esri, HERE, Garmin, OpenStreetMap contributors'
+            attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors'
           },
           'esri-dark-reference': {
             type: 'raster',
@@ -59,7 +59,7 @@ export const OperationsMap: React.FC<OperationsMapProps> = ({
               'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
             ],
             tileSize: 256,
-            attribution: '© Esri'
+            attribution: 'Esri'
           }
         },
         layers: [

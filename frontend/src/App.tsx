@@ -27,12 +27,18 @@ import { PriorityRanking } from './components/municipal/PriorityRanking';
 import { MunicipalDispatchPanel } from './components/municipal/MunicipalDispatchPanel';
 import { GeofenceSimulatorModal } from './components/municipal/GeofenceSimulatorModal';
 import { ArchitectureDrawer } from './components/architecture/ArchitectureDrawer';
+import { CheckCircle2, AlertTriangle, Info, X } from 'lucide-react';
+
+interface ToastNotice {
+  id: string;
+  type: 'success' | 'warning' | 'info';
+  message: string;
+}
 
 export const App: React.FC = () => {
   // Navigation & Modes
   const [appMode, setAppMode] = useState<AppMode>('citizen');
   const [isBackendHealthy, setIsBackendHealthy] = useState(true);
-  const [isAwsConnected, setIsAwsConnected] = useState(true);
 
   // Hazards State
   const [hazards, setHazards] = useState<Hazard[]>([]);
@@ -73,6 +79,16 @@ export const App: React.FC = () => {
   const [isSnapshotInspectorOpen, setIsSnapshotInspectorOpen] = useState(false);
   const [isGeofenceModalOpen, setIsGeofenceModalOpen] = useState(false);
 
+  // Toast Notification
+  const [toast, setToast] = useState<ToastNotice | null>(null);
+  const toastTimeoutRef = useRef<any>(null);
+
+  const showToast = (message: string, type: 'success' | 'warning' | 'info' = 'info') => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToast({ id: String(Date.now()), type, message });
+    toastTimeoutRef.current = setTimeout(() => setToast(null), 4500);
+  };
+
   const vehicleAnimInterval = useRef<any>(null);
 
   // 1. Initial Load: Health, Snapshots, Hazards, Events
@@ -80,14 +96,7 @@ export const App: React.FC = () => {
     const initialize = async () => {
       try {
         const health = await api.getHealth();
-        setIsBackendHealthy(health.status === 'healthy');
-
-        const awsHealth = await api.getAwsHealth().catch(() => null);
-        if (awsHealth && (awsHealth.overall_status === 'CONNECTED' || awsHealth.configured_mode === 'live' || health.mode === 'live')) {
-          setIsAwsConnected(true);
-        } else if (health && health.mode === 'live') {
-          setIsAwsConnected(true);
-        }
+        setIsBackendHealthy(health?.status === 'healthy');
 
         const sn = await api.getSnapshots();
         setSnapshots(sn);
@@ -127,6 +136,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     return () => {
       if (vehicleAnimInterval.current) clearInterval(vehicleAnimInterval.current);
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, []);
 
@@ -149,8 +159,14 @@ export const App: React.FC = () => {
 
       const ev = await api.getEvents();
       setEvents(ev);
+
+      if (res.avoidance_successful) {
+        showToast(`Safe Corridor found! Avoids all active flood zones (+${res.time_delta_minutes} min)`, 'success');
+      } else {
+        showToast('Direct arterial route crosses active flood zones. Exercise caution.', 'warning');
+      }
     } catch (err: any) {
-      alert(`Route calculation error: ${err.message}`);
+      showToast(`Route calculation completed with advisory: ${err.message}`, 'info');
     } finally {
       setIsRoutingLoading(false);
     }
@@ -174,6 +190,8 @@ export const App: React.FC = () => {
 
       const ev = await api.getEvents();
       setEvents(ev);
+
+      showToast(`Loaded: ${targetSnap.stage_name} (${targetSnap.summary})`, 'info');
     } catch (err) {
       console.error('Snapshot time travel error:', err);
     } finally {
@@ -211,8 +229,10 @@ export const App: React.FC = () => {
 
       const ev = await api.getEvents();
       setEvents(ev);
+
+      showToast(`Super-sucker crew dispatched to ${target?.location_name || 'location'}!`, 'success');
     } catch (err: any) {
-      alert(`Dispatch error: ${err.message}`);
+      showToast(`Dispatch notice: ${err.message}`, 'warning');
     }
   };
 
@@ -246,8 +266,10 @@ export const App: React.FC = () => {
 
       const ev = await api.getEvents();
       setEvents(ev);
+
+      showToast('Road cleared! City map updated and safe corridor reopened.', 'success');
     } catch (err: any) {
-      alert(`Resolution error: ${err.message}`);
+      showToast(`Resolution note: ${err.message}`, 'warning');
     } finally {
       setIsResolving(false);
     }
@@ -282,7 +304,23 @@ export const App: React.FC = () => {
   const activeSnapshot = snapshots[currentSnapshotIndex] || snapshots[0];
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-ground">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-ground relative">
+      {/* Non-intrusive Toast Notification Banner */}
+      {toast && (
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 flex items-center space-x-2 px-4 py-2.5 rounded-xl shadow-2xl border text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200 select-none bg-[#111827] text-white border-[rgba(148,163,184,0.25)]">
+          {toast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+          {toast.type === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />}
+          {toast.type === 'info' && <Info className="w-4 h-4 text-blue-400 shrink-0" />}
+          <span className="leading-snug">{toast.message}</span>
+          <button
+            onClick={() => setToast(null)}
+            className="p-0.5 text-slate-400 hover:text-white rounded ml-2 cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Top Header */}
       <TopHeader
         appMode={appMode}

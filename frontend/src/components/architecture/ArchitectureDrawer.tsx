@@ -18,7 +18,7 @@ export const ArchitectureDrawer: React.FC<ArchitectureDrawerProps> = ({ isOpen, 
             <h2 className="text-sm font-semibold text-white">
               CivicPulse Lakehouse Architecture
             </h2>
-            <p className="text-[11px] text-terminal-muted font-mono">Madurai Spatial Lakehouse · AWS Architecture</p>
+            <p className="text-[11px] text-terminal-muted font-mono">Madurai Spatial Lakehouse - AWS Architecture</p>
           </div>
           <button
             onClick={onClose}
